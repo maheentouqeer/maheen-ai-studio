@@ -67,7 +67,33 @@ const VoiceAssistant = () => {
       setStatus('thinking');
       let reply = '';
       try {
-        if (detected === 'general') {
+        // 1) Try knowledge base first (semantic search)
+        let kbAnswer: string | null = null;
+        try {
+          const { data: embData, error: embErr } = await supabase.functions.invoke('embed-query', {
+            body: { text }
+          });
+          if (embErr) throw embErr;
+          const embedding = embData?.embedding;
+          if (embedding) {
+            const { data: matches, error: mErr } = await supabase.rpc('match_assistant_knowledge', {
+              query_embedding: embedding,
+              match_threshold: 0.25,
+              match_count: 3,
+            });
+            if (mErr) console.warn('match error', mErr);
+            const best = Array.isArray(matches) ? matches[0] : null;
+            if (best && best.similarity >= 0.75) {
+              kbAnswer = best.answer as string;
+            }
+          }
+        } catch (kbErr) {
+          console.warn('KB lookup failed', kbErr);
+        }
+
+        if (kbAnswer) {
+          reply = kbAnswer;
+        } else if (detected === 'general') {
           const { data, error } = await supabase.functions.invoke('groq-proxy', {
             body: { prompt: text }
           });

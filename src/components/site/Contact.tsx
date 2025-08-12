@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
+
+const HCAPTCHA_SITEKEY = "REPLACE_WITH_YOUR_HCAPTCHA_SITE_KEY"; // Public site key
 
 const Contact = () => {
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptcha | null>(null);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -14,16 +19,24 @@ const Contact = () => {
     const name = String(data.get('name') || '');
     const email = String(data.get('email') || '');
     const message = String(data.get('message') || '');
+
+    if (!captchaToken) {
+      toast({ title: 'Please complete CAPTCHA', description: 'Confirm you are human to submit.' });
+      return;
+    }
+
     setLoading(true);
     try {
-      const { error } = await supabase.from('contacts').insert({ name, email, message });
-      if (error) throw error;
-      // Fire-and-forget confirmation email; DB insert already succeeded
-      supabase.functions.invoke('send-confirmation', { body: { name, email } }).catch((e) => {
-        console.warn('Confirmation email failed:', e);
+      const { data: resp, error } = await supabase.functions.invoke('contact-submit', {
+        body: { name, email, message, captchaToken }
       });
+      if (error) throw error;
+      if (!resp?.ok) throw new Error(resp?.error || 'Submission failed');
+
       toast({ title: 'Message received!', description: 'Thanks for reaching out — I will respond shortly.' });
       e.currentTarget.reset();
+      setCaptchaToken(null);
+      captchaRef.current?.resetCaptcha();
     } catch (err: any) {
       toast({ title: 'Something went wrong', description: String(err?.message || err) });
     } finally {
@@ -42,7 +55,15 @@ const Contact = () => {
           <Input type="email" name="email" placeholder="Your email" required aria-label="Your email" />
           <Textarea name="message" placeholder="Your message" required className="md:col-span-2" aria-label="Your message" />
           <div className="md:col-span-2">
-            <Button type="submit" disabled={loading}>{loading ? 'Sending...' : 'Send Message'}</Button>
+            <HCaptcha
+              ref={captchaRef as any}
+              sitekey={HCAPTCHA_SITEKEY}
+              onVerify={(token) => setCaptchaToken(token)}
+              theme="dark"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <Button type="submit" disabled={loading || !captchaToken}>{loading ? 'Sending...' : 'Send Message'}</Button>
           </div>
         </form>
       </div>
