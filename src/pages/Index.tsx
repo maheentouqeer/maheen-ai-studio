@@ -8,8 +8,10 @@ import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
 import VoiceAssistant from "@/components/site/VoiceAssistant";
 import { education } from "@/data/siteData";
+import useScrollReveal from "@/hooks/useScrollReveal";
 
 const Index = () => {
+  useScrollReveal();
   return (
     <div>
       <NavBar />

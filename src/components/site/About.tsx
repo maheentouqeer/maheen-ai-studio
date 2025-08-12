@@ -2,7 +2,7 @@ import { about, topSkills } from "@/data/siteData";
 
 const About = () => {
   return (
-    <section id="about" className="container py-16 md:py-24">
+    <section id="about" className="container py-16 md:py-24" data-animate="fade-up">
       <div className="grid md:grid-cols-2 gap-10 items-center">
         <div className="order-2 md:order-1 animate-fade-in">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">About Me</h2>
