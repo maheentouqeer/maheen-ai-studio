@@ -9,9 +9,9 @@ const corsHeaders = {
 
 interface TrainPayload {
   type: 'json'|'csv'|'text';
-  items?: { question?: string; answer: string }[]; // for json
-  csv?: string; // two columns: question,answer (header optional)
-  text?: string; // plain text, will be chunked by lines
+  items?: { question?: string; answer: string }[];
+  csv?: string;
+  text?: string;
 }
 
 function parseCSV(csv: string): { question: string; answer: string }[] {
@@ -42,17 +42,35 @@ serve(async (req) => {
   }
 
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-  const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
   const openaiKey = Deno.env.get('OPENAI_API_KEY');
 
-  if (!SUPABASE_URL || !SERVICE_ROLE) {
-    return new Response(JSON.stringify({ error: 'Supabase env missing' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-  }
   if (!openaiKey) {
     return new Response(JSON.stringify({ error: 'OPENAI_API_KEY not set' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    const supabase = createClient(SUPABASE_URL, ANON_KEY, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const { data: userRes } = await supabase.auth.getUser();
+    const user = userRes?.user;
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    // Ensure admin role
+    const { data: isAdmin, error: roleErr } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+    if (roleErr || !isAdmin) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
     const payload: TrainPayload = await req.json();
     let rows: { question: string; answer: string }[] = [];
     if (payload.type === 'json' && payload.items) rows = payload.items.filter(i => !!i.answer);
@@ -60,9 +78,7 @@ serve(async (req) => {
     else if (payload.type === 'text' && payload.text) rows = parseText(payload.text);
     else return new Response(JSON.stringify({ error: 'Invalid payload' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_ROLE);
-
-    // Insert knowledge rows
+    // Insert knowledge rows (RLS allows admin)
     const inserts = rows.map(r => ({ question: r.question, answer: r.answer }));
     const { data: inserted, error: insertErr } = await supabase
       .from('assistant_knowledge')
@@ -70,7 +86,7 @@ serve(async (req) => {
       .select('id, answer');
     if (insertErr) throw insertErr;
 
-    // Create embeddings in batches
+    // Create embeddings in batch
     const texts = inserted.map((r: any) => r.answer);
     const embedResp = await fetch('https://api.openai.com/v1/embeddings', {
       method: 'POST',

@@ -10,7 +10,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.train-knowledge]
-verify_jwt = false
+verify_jwt = true
 
 [functions.contact-submit]
 verify_jwt = false
