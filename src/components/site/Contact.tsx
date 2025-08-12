@@ -18,10 +18,12 @@ const Contact = () => {
     try {
       const { error } = await supabase.from('contacts').insert({ name, email, message });
       if (error) throw error;
+      // Fire-and-forget confirmation email; DB insert already succeeded
+      supabase.functions.invoke('send-confirmation', { body: { name, email } }).catch((e) => {
+        console.warn('Confirmation email failed:', e);
+      });
       toast({ title: 'Message received!', description: 'Thanks for reaching out — I will respond shortly.' });
       e.currentTarget.reset();
-      // TODO: After RESEND_API_KEY is added, call the edge function to email admin
-      // await supabase.functions.invoke('send-contact-email', { body: { name, email }})
     } catch (err: any) {
       toast({ title: 'Something went wrong', description: String(err?.message || err) });
     } finally {

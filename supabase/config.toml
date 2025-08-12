@@ -2,3 +2,7 @@ project_id = "urpekpxpvoaqagdjyerm"
 
 [functions.groq-proxy]
 verify_jwt = false
+
+[functions.send-confirmation]
+verify_jwt = false
+
