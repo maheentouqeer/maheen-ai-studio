@@ -5,6 +5,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type TableName = keyof Database['public']['Tables'];
 
 export type ColumnDef = {
   key: string;
@@ -12,11 +15,11 @@ export type ColumnDef = {
   type?: 'text' | 'textarea' | 'number' | 'date' | 'select';
   required?: boolean;
   options?: { label: string; value: string }[];
-  optionsSource?: { table: string; value: string; label: string };
+  optionsSource?: { table: TableName; value: string; label: string };
 };
 
 interface AdminCrudProps {
-  table: string;
+  table: TableName;
   columns: ColumnDef[];
 }
 
@@ -36,7 +39,7 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
         const opt: Record<string, { label: string; value: string }[]> = {};
         await Promise.all(columns.map(async (c) => {
           if (c.type === 'select' && c.optionsSource) {
-            const { data } = await supabase.from(c.optionsSource.table).select(`${c.optionsSource.value}, ${c.optionsSource.label}`);
+            const { data } = await (supabase.from as any)(c.optionsSource.table).select(`${c.optionsSource.value}, ${c.optionsSource.label}`);
             opt[c.key] = (data || []).map((r: any) => ({ value: r[c.optionsSource!.value], label: r[c.optionsSource!.label] }));
           } else if (c.type === 'select' && c.options) {
             opt[c.key] = c.options;
@@ -44,7 +47,7 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
         }));
         setOptionsMap(opt);
 
-        const { data, error } = await supabase.from(table).select('*').limit(200);
+        const { data, error } = await (supabase.from as any)(table).select('*').limit(200);
         if (error) throw error;
         setRows(data || []);
       } catch (e: any) {
@@ -74,12 +77,12 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
   const save = async () => {
     try {
       if (editing && editing.id) {
-        const { data, error } = await supabase.from(table).update(form).eq('id', editing.id).select('*').maybeSingle();
+        const { data, error } = await (supabase.from as any)(table).update(form).eq('id', editing.id).select('*').maybeSingle();
         if (error) throw error;
         setRows((r) => r.map((x) => (x.id === editing.id ? data : x)) as any);
         toast({ title: 'Updated' });
       } else {
-        const { data, error } = await supabase.from(table).insert(form).select('*').maybeSingle();
+        const { data, error } = await (supabase.from as any)(table).insert(form).select('*').maybeSingle();
         if (error) throw error;
         setRows((r) => [data, ...r]);
         toast({ title: 'Created' });
@@ -93,7 +96,7 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
 
   const remove = async (id: string) => {
     try {
-      await supabase.from(table).delete().eq('id', id);
+      await (supabase.from as any)(table).delete().eq('id', id);
       setRows((r) => r.filter((x) => x.id !== id));
       toast({ title: 'Deleted' });
     } catch (e: any) {
