@@ -26,9 +26,9 @@ const Projects = () => {
           return (
             <article key={p.id} className="group rounded-xl border border-border bg-card/60 p-5 hover-scale hover:shadow-[var(--shadow-elevate)] animate-fade-in">
               {img ? (
-                <LazyImage src={img} alt={`${p.name || p.title} preview`} className="h-40 mb-4" />
+                <LazyImage src={img} alt={`${(p as any).name || (p as any).title} preview`} className="h-40 mb-4" />
               ) : (
-                <div className="h-40 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-border mb-4" aria-label={`${p.name || p.title} preview`} />
+                <div className="h-40 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-border mb-4" aria-label={`${(p as any).name || (p as any).title} preview`} />
               )}
               <h3 className="font-semibold text-lg mb-1">{(p as any).name || (p as any).title}</h3>
               <p className="text-sm text-muted-foreground mb-3">{p.description}</p>
