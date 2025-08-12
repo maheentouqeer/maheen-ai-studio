@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const [loading, setLoading] = useState(false);
@@ -10,22 +11,26 @@ const Contact = () => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    const payload = Object.fromEntries(data.entries());
+    const name = String(data.get('name') || '');
+    const email = String(data.get('email') || '');
+    const message = String(data.get('message') || '');
     setLoading(true);
     try {
-      // Placeholder until Supabase is connected
-      console.log('Contact submission (connect Supabase to persist):', payload);
-      toast({ title: 'Message received!', description: 'Connect Supabase to enable storage and email notifications.' });
+      const { error } = await supabase.from('contacts').insert({ name, email, message });
+      if (error) throw error;
+      toast({ title: 'Message received!', description: 'Thanks for reaching out — I will respond shortly.' });
       e.currentTarget.reset();
-    } catch (err) {
-      toast({ title: 'Something went wrong', description: String(err) });
+      // TODO: After RESEND_API_KEY is added, call the edge function to email admin
+      // await supabase.functions.invoke('send-contact-email', { body: { name, email }})
+    } catch (err: any) {
+      toast({ title: 'Something went wrong', description: String(err?.message || err) });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section id="contact" className="relative">
+    <section id="contact" className="relative" data-animate="fade-up">
       <div className="absolute inset-0 -z-10 opacity-80" aria-hidden style={{ background: 'var(--gradient-hero)' }} />
       <div className="container py-16 md:py-24">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">Contact Me</h2>

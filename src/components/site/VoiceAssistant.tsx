@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { about, education, projects, skills, certifications } from "@/data/siteData";
-import { Mic, X, Loader2 } from "lucide-react";
+import { Mic } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-// import { supabase } from "@/integrations/supabase/client"; // Will be used in Phase 2
+import { supabase } from "@/integrations/supabase/client";
 
 const synth = typeof window !== 'undefined' ? window.speechSynthesis : undefined;
 const SpeechRecognition = typeof window !== 'undefined' ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition : undefined;
@@ -31,7 +31,7 @@ const classifyIntent = (q: string): Intent => {
   return 'general';
 };
 
-const answer = (q: string): string => {
+const profileAnswer = (q: string): string => {
   const lower = q.toLowerCase();
   if (lower.includes('name')) return `I am ${about.name}.`;
   if (lower.includes('email')) return `You can email me at ${about.email}.`;
@@ -40,11 +40,6 @@ const answer = (q: string): string => {
   if (lower.includes('project')) return `Some highlights are ${projects.slice(0,3).map(p=> (p as any).name || (p as any).title).join(', ')}.`;
   if (lower.includes('education')) return `I studied ${education[0].detail} at ${education[0].school}.`;
   return `About me: ${knowledgeBase()}`;
-};
-
-const groqStub = async (q: string) => {
-  // Phase 1 stub. Phase 2 will call Supabase Edge Function that proxies to Groq using secret Grok-api-key
-  return `That's a great question. I'll be connected to Groq in the next step for deep AI/tech/design answers. Meanwhile: ${q.slice(0,100)}...`;
 };
 
 const VoiceAssistant = () => {
@@ -71,13 +66,23 @@ const VoiceAssistant = () => {
       setIntent(detected);
       setStatus('thinking');
       let reply = '';
-      if (detected === 'general') {
-        reply = await groqStub(text);
-      } else if (detected === 'profile') {
-        reply = answer(text);
-      } else {
-        reply = `Got it — you want to ${detected}. I can help! Please fill the short form so I can respond quickly.`;
+      try {
+        if (detected === 'general') {
+          const { data, error } = await supabase.functions.invoke('groq-proxy', {
+            body: { prompt: text }
+          });
+          if (error) throw error;
+          reply = data?.text || 'I could not generate an answer right now.';
+        } else if (detected === 'profile') {
+          reply = profileAnswer(text);
+        } else {
+          reply = `Got it — you want to ${detected}. I can help! Please fill the short form so I can respond quickly.`;
+        }
+      } catch (err: any) {
+        console.error(err);
+        reply = 'There was an issue reaching the AI service. Please try again in a moment.';
       }
+
       setResponse(reply);
       if (synth) {
         const utter = new SpeechSynthesisUtterance(reply);
@@ -114,19 +119,19 @@ const VoiceAssistant = () => {
     };
 
     try {
-      // Phase 2: send to Supabase contacts table
-      // const { error } = await supabase.from('contacts').insert({
-      //   name: payload.name,
-      //   email: payload.email,
-      //   message: `[${payload.intent}] ${payload.message}`,
-      // });
-      // if (error) throw error;
-      toast({ title: 'Request captured', description: 'We will follow up shortly. (Supabase wiring in Phase 2)' });
+      // Phase 2: save to contacts table
+      const { error } = await supabase.from('contacts').insert({
+        name: payload.name,
+        email: payload.email,
+        message: `[${payload.intent}] ${payload.message}`,
+      });
+      if (error) throw error;
+      toast({ title: 'Request received', description: 'Thanks! I will reach out shortly.' });
       (ev.currentTarget as HTMLFormElement).reset();
       setIntent(null);
     } catch (err: any) {
       console.error(err);
-      toast({ title: 'Saved locally', description: 'Will sync to Supabase in Phase 2.' });
+      toast({ title: 'Could not save right now', description: 'Please try again later.' });
     }
   };
 
@@ -136,19 +141,16 @@ const VoiceAssistant = () => {
         <div className="mb-3 w-[22rem] rounded-2xl glass-panel p-4 shadow-[var(--shadow-elevate)] animate-enter">
           <p className="text-sm text-muted-foreground">Talk to Maheen's Assistant about services, projects, or general AI questions.</p>
 
-          {/* Transcript */}
           {transcript && (
             <div className="mt-3 text-xs bg-secondary/60 rounded-lg p-3 border border-border" aria-live="polite">
               <span className="text-muted-foreground">You:</span> {transcript}
             </div>
           )}
 
-          {/* Response */}
           {response && (
             <div className="mt-2 text-sm">{response}</div>
           )}
 
-          {/* Service form when intent requires details */}
           {intent && ["hire","project","consult","promote"].includes(intent) && (
             <form className="mt-3 grid gap-2" onSubmit={onSubmitService} aria-label="Service request form">
               <input className="rounded-md bg-background border border-border px-3 py-2 text-sm" name="name" placeholder="Your name" required aria-label="Your name" />
@@ -167,7 +169,6 @@ const VoiceAssistant = () => {
         </div>
       )}
 
-      {/* Floating button */}
       <button
         onClick={() => setOpen(v => !v)}
         aria-label={open ? 'Close voice assistant' : 'Open voice assistant'}
