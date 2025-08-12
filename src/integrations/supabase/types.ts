@@ -50,19 +50,25 @@ export type Database = {
       assistant_knowledge: {
         Row: {
           answer: string | null
+          created_at: string
           dataset_file_url: string | null
+          embedding: string | null
           id: string
           question: string | null
         }
         Insert: {
           answer?: string | null
+          created_at?: string
           dataset_file_url?: string | null
+          embedding?: string | null
           id?: string
           question?: string | null
         }
         Update: {
           answer?: string | null
+          created_at?: string
           dataset_file_url?: string | null
+          embedding?: string | null
           id?: string
           question?: string | null
         }
@@ -87,6 +93,7 @@ export type Database = {
         Row: {
           created_at: string
           email: string
+          handled: boolean
           id: string
           message: string | null
           name: string
@@ -94,6 +101,7 @@ export type Database = {
         Insert: {
           created_at?: string
           email: string
+          handled?: boolean
           id?: string
           message?: string | null
           name: string
@@ -101,6 +109,7 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string
+          handled?: boolean
           id?: string
           message?: string | null
           name?: string
@@ -196,6 +205,27 @@ export type Database = {
           },
         ]
       }
+      rate_limits: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip?: string
+        }
+        Relationships: []
+      }
       skills: {
         Row: {
           category: string | null
@@ -244,12 +274,117 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      binary_quantize: {
+        Args: { "": string } | { "": unknown }
+        Returns: unknown
+      }
+      halfvec_avg: {
+        Args: { "": number[] }
+        Returns: unknown
+      }
+      halfvec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      halfvec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      halfvec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
       has_role: {
         Args: {
           _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
         }
         Returns: boolean
+      }
+      hnsw_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_sparsevec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnswhandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflat_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflat_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflathandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      l2_norm: {
+        Args: { "": unknown } | { "": unknown }
+        Returns: number
+      }
+      l2_normalize: {
+        Args: { "": string } | { "": unknown } | { "": unknown }
+        Returns: unknown
+      }
+      match_assistant_knowledge: {
+        Args: {
+          query_embedding: string
+          match_threshold: number
+          match_count: number
+        }
+        Returns: {
+          id: string
+          question: string
+          answer: string
+          similarity: number
+        }[]
+      }
+      sparsevec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      sparsevec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      sparsevec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
+      vector_avg: {
+        Args: { "": number[] }
+        Returns: string
+      }
+      vector_dims: {
+        Args: { "": string } | { "": unknown }
+        Returns: number
+      }
+      vector_norm: {
+        Args: { "": string }
+        Returns: number
+      }
+      vector_out: {
+        Args: { "": string }
+        Returns: unknown
+      }
+      vector_send: {
+        Args: { "": string }
+        Returns: string
+      }
+      vector_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
       }
     }
     Enums: {
