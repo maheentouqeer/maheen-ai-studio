@@ -116,4 +116,26 @@ All colors MUST be HSL.
   .pulse { @apply animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]; }
   .btn-gradient { background-image: var(--gradient-primary); }
   .glass-panel { @apply bg-card/80 backdrop-blur border border-border; }
+
+  /* Premium typography and parallax helpers */
+  .title-gradient {
+    background: linear-gradient(90deg, hsl(210 100% 90%), hsl(214 92% 55%), hsl(210 100% 90%));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient-shift 6s ease-in-out infinite;
+  }
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .parallax-layer { will-change: transform; transition: transform 0.2s ease-out; }
+
+  /* Animated logo dot */
+  .logo-dot { display: inline-block; width: 8px; height: 8px; background: hsl(var(--primary)); border-radius: 9999px; box-shadow: var(--shadow-glow); animation: logo-move 3s ease-in-out infinite; }
+  @keyframes logo-move { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
 }
+
+

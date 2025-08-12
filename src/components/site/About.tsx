@@ -5,7 +5,7 @@ const About = () => {
     <section id="about" className="container py-16 md:py-24" data-animate="fade-up">
       <div className="grid md:grid-cols-2 gap-10 items-center">
         <div className="order-2 md:order-1 animate-fade-in">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">About Me</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 title-gradient">About Me</h2>
           <p className="text-muted-foreground leading-relaxed">{about.summary}</p>
           <div className="mt-6 flex flex-wrap gap-2">
             {topSkills.map(s => (
