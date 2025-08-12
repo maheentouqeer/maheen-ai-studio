@@ -20,29 +20,32 @@ serve(async (req) => {
       });
     }
 
-    const apiKey = Deno.env.get('OPENAI_API_KEY');
+    const apiKey = Deno.env.get('Grok-api-key');
+    const embedModelEnv = Deno.env.get('GROQ_EMBED_MODEL');
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'OPENAI_API_KEY not set' }), {
+      return new Response(JSON.stringify({ error: 'Grok-api-key not set' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const resp = await fetch('https://api.openai.com/v1/embeddings', {
+    const selectedModel = (model && typeof model === 'string') ? model : (embedModelEnv || 'nomic-embed-text');
+
+    const resp = await fetch('https://api.groq.com/openai/v1/embeddings', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: model || 'text-embedding-3-small',
+        model: selectedModel,
         input: text,
       }),
     });
 
     if (!resp.ok) {
       const err = await resp.text();
-      console.error('OpenAI embeddings error:', err);
+      console.error('Groq embeddings error:', err);
       return new Response(JSON.stringify({ error: 'Embedding request failed' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

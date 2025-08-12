@@ -9,8 +9,8 @@ const corsHeaders = {
 };
 
 async function verifyHCaptcha(token: string, remoteip?: string) {
-  const secret = Deno.env.get('HCAPTCHA_SECRET');
-  if (!secret) throw new Error('HCAPTCHA_SECRET not configured');
+  const secret = Deno.env.get('HCAPTCHA_SECRET') || Deno.env.get('Hcaptcha-Secret');
+  if (!secret) throw new Error('HCAPTCHA secret not configured');
   const form = new URLSearchParams();
   form.set('secret', secret);
   form.set('response', token);

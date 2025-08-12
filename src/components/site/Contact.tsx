@@ -5,8 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
-
-const HCAPTCHA_SITEKEY = "REPLACE_WITH_YOUR_HCAPTCHA_SITE_KEY"; // Public site key
+import { HCAPTCHA_SITEKEY } from "@/config";
 
 const Contact = () => {
   const [loading, setLoading] = useState(false);
