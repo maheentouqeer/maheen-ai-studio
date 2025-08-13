@@ -177,6 +177,7 @@ export type Database = {
           id: string
           link_url: string | null
           media_url: string | null
+          published: boolean
           title: string
         }
         Insert: {
@@ -185,6 +186,7 @@ export type Database = {
           id?: string
           link_url?: string | null
           media_url?: string | null
+          published?: boolean
           title: string
         }
         Update: {
@@ -193,6 +195,7 @@ export type Database = {
           id?: string
           link_url?: string | null
           media_url?: string | null
+          published?: boolean
           title?: string
         }
         Relationships: [

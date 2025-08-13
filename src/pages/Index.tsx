@@ -7,11 +7,21 @@ import Projects from "@/components/site/Projects";
 import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
 import VoiceAssistant from "@/components/site/VoiceAssistant";
+import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { education } from "@/data/siteData";
 import useScrollReveal from "@/hooks/useScrollReveal";
 
 const Index = () => {
   useScrollReveal();
+  const { data: educationData } = useSupabaseData<any>("education");
+  const displayEducation = educationData.length > 0 
+    ? educationData.map((e: any) => ({
+        school: e.institution,
+        detail: e.degree || "Studies",
+        period: `${e.start_date || ''} - ${e.end_date || 'Present'}`
+      }))
+    : education;
+
   return (
     <div>
       <NavBar />
@@ -19,7 +29,7 @@ const Index = () => {
         <Hero />
         <About />
         <Skills />
-        <Timeline id="education" title="Education" items={education} />
+        <Timeline id="education" title="Education" items={displayEducation} />
         <Projects />
         <Contact />
       </main>

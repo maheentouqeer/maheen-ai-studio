@@ -133,6 +133,7 @@ const Admin = () => {
                 { key: 'category_id', label: 'Category', type: 'select', optionsSource: { table: 'categories', value: 'id', label: 'name' } },
                 { key: 'media_url', label: 'Media URL', type: 'text' },
                 { key: 'link_url', label: 'Link URL', type: 'text' },
+                { key: 'published', label: 'Published', type: 'select', options: [{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }] },
               ]}
             />
           </TabsContent>

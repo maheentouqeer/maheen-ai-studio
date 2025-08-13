@@ -119,23 +119,53 @@ All colors MUST be HSL.
 
   /* Premium typography and parallax helpers */
   .title-gradient {
-    background: linear-gradient(90deg, hsl(210 100% 90%), hsl(214 92% 55%), hsl(210 100% 90%));
-    background-size: 200% 200%;
+    background: linear-gradient(135deg, hsl(224 60% 4%), hsl(210 100% 90%), hsl(214 92% 55%), hsl(210 100% 90%), hsl(224 60% 4%));
+    background-size: 300% 300%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: gradient-shift 6s ease-in-out infinite;
+    animation: gradient-shift 8s ease-in-out infinite;
   }
   @keyframes gradient-shift {
     0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    33% { background-position: 50% 100%; }
+    66% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+  }
+  
+  /* Typing effect */
+  .typing-effect {
+    overflow: hidden;
+    border-right: 2px solid hsl(var(--primary));
+    white-space: nowrap;
+    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+  }
+  @keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  @keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: hsl(var(--primary)); }
   }
   .parallax-layer { will-change: transform; transition: transform 0.2s ease-out; }
 
   /* Animated logo dot */
   .logo-dot { display: inline-block; width: 8px; height: 8px; background: hsl(var(--primary)); border-radius: 9999px; box-shadow: var(--shadow-glow); animation: logo-move 3s ease-in-out infinite; }
   @keyframes logo-move { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+  
+  /* Ripple effect for buttons */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+  }
+  @keyframes ripple-animation {
+    to { transform: scale(4); opacity: 0; }
+  }
 }
 
 
