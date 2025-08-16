@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { about } from "@/data/siteData";
 import Hero3D from "./Hero3D";
+import { gsap } from "gsap";
 
 const Hero = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -9,19 +10,64 @@ const Hero = () => {
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
+
+    // GSAP Hero Animations
+    const tl = gsap.timeline();
+    
+    // Animate hero content
+    tl.from(".hero-title", { 
+      opacity: 0, 
+      y: 50, 
+      duration: 1, 
+      ease: "power3.out" 
+    })
+    .from(".hero-subtitle", { 
+      opacity: 0, 
+      y: 30, 
+      duration: 0.8, 
+      ease: "power3.out" 
+    }, "-=0.5")
+    .from(".hero-description", { 
+      opacity: 0, 
+      y: 20, 
+      duration: 0.8, 
+      ease: "power3.out" 
+    }, "-=0.4")
+    .from(".hero-buttons", { 
+      opacity: 0, 
+      y: 20, 
+      duration: 0.8, 
+      ease: "power3.out" 
+    }, "-=0.3")
+    .from("[data-depth]", { 
+      opacity: 0, 
+      scale: 0.8, 
+      duration: 1, 
+      stagger: 0.1, 
+      ease: "back.out(1.7)" 
+    }, "-=0.6");
+
+    // Parallax effect with GSAP
     const onMove = (e: MouseEvent) => {
       const rect = el.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
       const dx = (e.clientX - cx) / rect.width;
       const dy = (e.clientY - cy) / rect.height;
+      
       el.querySelectorAll<HTMLElement>('[data-depth]').forEach((layer) => {
         const depth = Number(layer.dataset.depth || 0);
         const tx = -dx * depth * 20;
         const ty = -dy * depth * 20;
-        layer.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+        gsap.to(layer, {
+          x: tx,
+          y: ty,
+          duration: 0.3,
+          ease: "power2.out"
+        });
       });
     };
+    
     el.addEventListener('mousemove', onMove);
     return () => el.removeEventListener('mousemove', onMove);
   }, []);
@@ -40,17 +86,17 @@ const Hero = () => {
         <span className="block h-14 w-14 md:h-20 md:w-20 rounded-full bg-primary/25 blur-xl" />
       </div>
       <Hero3D />
-      <div className="container py-24 md:py-32" data-animate="fade-up">
-        <p className="mb-3 text-sm text-muted-foreground animate-fade-in">{about.location}</p>
-        <h1 className="text-4xl md:text-6xl font-extrabold leading-tight animate-enter title-gradient">
+      <div className="container py-24 md:py-32">
+        <p className="hero-subtitle mb-3 text-sm text-muted-foreground">📍 {about.location}</p>
+        <h1 className="hero-title text-4xl md:text-6xl font-extrabold leading-tight title-gradient">
           {about.name} <span className="text-primary">—</span> AI Engineer
         </h1>
-        <p className="mt-5 max-w-2xl text-base md:text-lg text-muted-foreground animate-fade-in">
+        <p className="hero-description mt-5 max-w-2xl text-base md:text-lg text-muted-foreground">
           {about.summary}
         </p>
-        <div className="mt-8 flex gap-3 animate-fade-in">
-          <a href="#projects"><Button size="lg" variant="premium">View Projects</Button></a>
-          <a href="#contact"><Button variant="secondary" size="lg">Contact Me</Button></a>
+        <div className="hero-buttons mt-8 flex gap-3">
+          <a href="#projects"><Button size="lg" className="btn-gradient hover-scale ripple">View Projects</Button></a>
+          <a href="#contact"><Button variant="outline" size="lg" className="glass-panel hover-scale">Contact Me</Button></a>
         </div>
       </div>
     </section>

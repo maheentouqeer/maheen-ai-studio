@@ -1,6 +1,7 @@
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { topSkills } from "@/data/siteData";
 import LazyImage from "@/components/ui/LazyImage";
+import profileIllustration from "@/assets/profile-illustration.jpg";
 
 const About = () => {
   const { data: aboutData, loading } = useSupabaseData<any>("about");
@@ -25,15 +26,11 @@ const About = () => {
           </div>
         </div>
         <div className="order-1 md:order-2 flex justify-center">
-          {aboutInfo?.image_url ? (
-            <LazyImage 
-              src={aboutInfo.image_url} 
-              alt="Profile" 
-              className="h-40 w-40 md:h-56 md:w-56 rounded-xl shadow-[var(--shadow-glow)] hover-scale"
-            />
-          ) : (
-            <div className="h-40 w-40 md:h-56 md:w-56 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 ring-1 ring-border shadow-[var(--shadow-glow)] transition-transform hover:scale-105" aria-label="Profile image decorative" />
-          )}
+          <LazyImage 
+            src={aboutInfo?.image_url || profileIllustration} 
+            alt="AI Engineer Profile - Young Muslim woman with hijab at computer workspace" 
+            className="h-40 w-40 md:h-56 md:w-56 rounded-xl shadow-[var(--shadow-glow)] hover-scale ring-2 ring-primary/20"
+          />
         </div>
       </div>
     </section>
