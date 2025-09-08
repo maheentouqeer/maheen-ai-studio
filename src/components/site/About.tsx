@@ -1,7 +1,7 @@
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { topSkills } from "@/data/siteData";
 import LazyImage from "@/components/ui/LazyImage";
-import profileIllustration from "@/assets/profile-illustration.jpg";
+import maheen3DImage from "@/assets/maheen-3d-illustration.jpg";
 
 const About = () => {
   const { data: aboutData, loading } = useSupabaseData<any>("about");
@@ -27,8 +27,8 @@ const About = () => {
         </div>
         <div className="order-1 md:order-2 flex justify-center">
           <LazyImage 
-            src={aboutInfo?.image_url || profileIllustration} 
-            alt="AI Engineer Profile - Young Muslim woman with hijab at computer workspace" 
+            src={aboutInfo?.image_url || maheen3DImage} 
+            alt="Maheen Touqeer - AI Engineer and Developer working with cutting-edge technology" 
             className="h-40 w-40 md:h-56 md:w-56 rounded-xl shadow-[var(--shadow-glow)] hover-scale ring-2 ring-primary/20"
           />
         </div>

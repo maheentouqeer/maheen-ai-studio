@@ -1,7 +1,12 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import PasscodeModal from "./PasscodeModal";
+import { Shield } from "lucide-react";
 
 const NavBar = () => {
+  const [passcodeModalOpen, setPasscodeModalOpen] = useState(false);
+  
   const links = [
     { href: "#home", label: "Home" },
     { href: "#about", label: "About" },
@@ -29,10 +34,24 @@ const NavBar = () => {
             </li>
           ))}
         </ul>
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setPasscodeModalOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <Shield className="h-4 w-4" />
+            Admin
+          </Button>
           <a href="#contact"><Button>{"Hire Me"}</Button></a>
         </div>
       </nav>
+      
+      <PasscodeModal 
+        open={passcodeModalOpen} 
+        onOpenChange={setPasscodeModalOpen} 
+      />
     </header>
   );
 };

@@ -17,6 +17,24 @@ const Admin = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // First check for passcode-based admin session
+        const adminToken = localStorage.getItem('adminToken');
+        const adminTokenExpiry = localStorage.getItem('adminTokenExpiry');
+        
+        if (adminToken && adminTokenExpiry) {
+          const expiryDate = new Date(adminTokenExpiry);
+          if (expiryDate > new Date()) {
+            setAllowed(true);
+            setLoading(false);
+            return;
+          } else {
+            // Token expired, clear it
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminTokenExpiry');
+          }
+        }
+
+        // Fallback to email/password authentication
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session) {
@@ -73,7 +91,13 @@ const Admin = () => {
   }, [navigate]);
 
   const handleLogout = async () => {
+    // Clear passcode session
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminTokenExpiry');
+    
+    // Also sign out from Supabase auth if logged in
     await supabase.auth.signOut();
+    
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
