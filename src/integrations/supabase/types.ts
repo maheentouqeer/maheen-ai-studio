@@ -170,6 +170,45 @@ export type Database = {
         }
         Relationships: []
       }
+      hire_links: {
+        Row: {
+          available: boolean
+          created_at: string
+          description: string | null
+          id: string
+          platform: string
+          projects: string | null
+          rate: string | null
+          rating: string | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          available?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          platform: string
+          projects?: string | null
+          rate?: string | null
+          rating?: string | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          available?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          platform?: string
+          projects?: string | null
+          rate?: string | null
+          rating?: string | null
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           category_id: string | null

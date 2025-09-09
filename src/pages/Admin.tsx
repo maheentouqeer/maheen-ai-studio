@@ -162,6 +162,16 @@ const Admin = () => {
     { key: 'published', label: 'Published', type: 'select', options: [{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }] },
   ];
 
+  const hireLinksColumns: ColumnDef[] = [
+    { key: 'platform', label: 'Platform', type: 'text', required: true },
+    { key: 'url', label: 'URL', type: 'text', required: true },
+    { key: 'description', label: 'Description', type: 'text' },
+    { key: 'rate', label: 'Rate', type: 'text' },
+    { key: 'rating', label: 'Rating', type: 'text' },
+    { key: 'projects', label: 'Projects Count', type: 'text' },
+    { key: 'available', label: 'Available', type: 'select', options: [{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }] },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-primary">
       <header className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
@@ -183,7 +193,7 @@ const Admin = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="about" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 glass-panel">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9 glass-panel">
             <TabsTrigger value="about" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               About
@@ -193,6 +203,7 @@ const Admin = () => {
             <TabsTrigger value="experience">Experience</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="projects">Projects</TabsTrigger>
+            <TabsTrigger value="hirelinks">Hire Links</TabsTrigger>
             <TabsTrigger value="knowledge" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
               AI Knowledge
@@ -249,6 +260,14 @@ const Admin = () => {
               <h2 className="text-xl font-semibold">Projects Management</h2>
             </div>
             <AdminCrud table="projects" columns={projectsColumns} />
+          </TabsContent>
+
+          <TabsContent value="hirelinks" className="space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <Database className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Hire Links Management</h2>
+            </div>
+            <AdminCrud table="hire_links" columns={hireLinksColumns} />
           </TabsContent>
 
           <TabsContent value="knowledge" className="space-y-4">
