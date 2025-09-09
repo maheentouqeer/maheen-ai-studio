@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import LazyImage from "@/components/ui/LazyImage";
 import LottieLoader from "@/components/ui/LottieLoader";
+import { ExternalLink } from "lucide-react";
 
 const Projects = () => {
   const [filter, setFilter] = useState<string>('All');
@@ -39,11 +41,27 @@ const Projects = () => {
 
   return (
     <section id="projects" className="container py-16 md:py-24" data-animate="fade-up">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-        <h2 className="text-3xl md:text-4xl font-bold title-gradient">Projects</h2>
-        <div className="flex flex-wrap gap-2">
+      <div className="text-center mb-16">
+        <h2 className="text-3xl md:text-5xl font-display font-black mb-6 title-gradient">
+          Featured Projects
+        </h2>
+        <p className="text-muted-foreground/80 max-w-2xl mx-auto text-lg mb-8">
+          Innovative AI solutions and creative applications showcasing cutting-edge technology
+        </p>
+        
+        <div className="flex flex-wrap justify-center gap-3">
           {categories.map(c => (
-            <Button key={c} variant={filter === c ? 'premium' : 'secondary'} onClick={() => setFilter(c)} size="sm">
+            <Button 
+              key={c} 
+              variant={filter === c ? 'default' : 'outline'} 
+              onClick={() => setFilter(c)} 
+              size="sm"
+              className={`rounded-full transition-all duration-300 ${
+                filter === c 
+                  ? 'btn-premium shadow-glow' 
+                  : 'glass-panel hover:border-primary/50'
+              }`}
+            >
               {c}
             </Button>
           ))}
@@ -55,15 +73,15 @@ const Projects = () => {
           <LottieLoader size="lg" />
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map(p => {
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {items.map((p, idx) => {
             const img = p.media_url;
             const title = p.title;
             const category = p.categories?.name || 'Uncategorized';
             return (
               <article
                 key={p.id}
-                className="group rounded-xl border border-border bg-card/60 p-5 hover:shadow-[var(--shadow-elevate)] transition-transform duration-200 will-change-transform cursor-pointer"
+                className="group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-card backdrop-blur-sm card-hover will-change-transform cursor-pointer"
                 onMouseMove={onCardMove}
                 onMouseLeave={onCardLeave}
                 onClick={() => { setActive(p); setOpen(true); }}
@@ -71,54 +89,97 @@ const Projects = () => {
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter') { setActive(p); setOpen(true); } }}
                 aria-label={`Open ${title} preview`}
+                data-animate="zoom-in"
+                style={{ animationDelay: `${idx * 0.1}s` }}
               >
-                {img ? (
-                  <LazyImage src={img} alt={`${title} preview`} className="h-40 mb-4" />
-                ) : (
-                  <div className="h-40 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-border mb-4 flex items-center justify-center" aria-label={`${title} preview`}>
-                    <span className="text-4xl text-primary/40">🚀</span>
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+                
+                {/* Image */}
+                <div className="relative h-48 overflow-hidden">
+                  {img ? (
+                    <LazyImage 
+                      src={img} 
+                      alt={`${title} preview`} 
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                    />
+                  ) : (
+                    <div className="h-full w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                      <span className="text-6xl opacity-40">🚀</span>
+                    </div>
+                  )}
+                  
+                  {/* Category badge */}
+                  <div className="absolute top-4 left-4 z-20">
+                    <Badge className="bg-background/90 backdrop-blur text-foreground border-border/50 font-medium">
+                      {category}
+                    </Badge>
                   </div>
-                )}
-                <div className="mb-2">
-                  <span className="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-full">{category}</span>
                 </div>
-                <h3 className="font-semibold text-lg mb-1">{title}</h3>
-                <p className="text-sm text-muted-foreground mb-3">{p.description}</p>
-                <span className="story-link text-sm">View details</span>
+                
+                {/* Content */}
+                <div className="p-6 relative z-20">
+                  <h3 className="font-display font-bold text-xl mb-2 group-hover:text-primary transition-colors">
+                    {title}
+                  </h3>
+                  <p className="text-muted-foreground/90 mb-4 line-clamp-2 leading-relaxed">
+                    {p.description}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="story-link text-sm font-medium">View details →</span>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                    </div>
+                  </div>
+                </div>
               </article>
             );
           })}
         </div>
       )}
 
+      {/* Enhanced Modal */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-3xl bg-gradient-card border-border/50 backdrop-blur-xl">
           <DialogHeader>
-            <DialogTitle>{active?.title}</DialogTitle>
+            <DialogTitle className="text-2xl font-display font-bold title-gradient">
+              {active?.title}
+            </DialogTitle>
           </DialogHeader>
           {active && (
-            <div className="grid gap-4">
+            <div className="grid gap-6">
               {active.media_url && (
-                <LazyImage src={active.media_url} alt={`${active.title} preview`} className="h-72" />
+                <div className="relative overflow-hidden rounded-xl">
+                  <LazyImage 
+                    src={active.media_url} 
+                    alt={`${active.title} preview`} 
+                    className="h-80 w-full object-cover" 
+                  />
+                </div>
               )}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-full">
+              
+              <div className="flex items-center gap-3">
+                <Badge className="bg-primary/10 text-primary border-primary/30">
                   {active.categories?.name || 'Project'}
-                </span>
+                </Badge>
               </div>
-              <p className="text-muted-foreground">{active.description}</p>
+              
+              <p className="text-muted-foreground/90 leading-relaxed text-lg">
+                {active.description}
+              </p>
+              
               {active.link_url && (
-                <a
-                  href={active.link_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="story-link inline-flex items-center gap-2"
-                >
-                  Open project
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
+                <Button asChild className="btn-premium w-fit">
+                  <a
+                    href={active.link_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    Open project
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </Button>
               )}
             </div>
           )}

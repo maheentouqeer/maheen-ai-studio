@@ -33,41 +33,53 @@ const Education = () => {
 
   return (
     <section id="education" className="container py-16 md:py-24" data-animate="fade-up">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold title-gradient animate-fade-in">
-          Education
+      <div className="text-center mb-16">
+        <h2 className="text-3xl md:text-5xl font-display font-black mb-4 title-gradient">
+          Education Journey
         </h2>
-        <p className="text-muted-foreground mt-4 animate-fade-in">
-          Academic background and certifications
+        <p className="text-muted-foreground/80 max-w-2xl mx-auto text-lg">
+          Academic foundation and continuous learning in AI and technology
         </p>
       </div>
 
-      <div className="space-y-6 max-w-4xl mx-auto">
+      <div className="space-y-8 max-w-4xl mx-auto">
         {education.map((edu: any, index: number) => (
-          <Card key={edu.id} className="glass-panel hover-scale transition-all duration-300">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <GraduationCap className="h-6 w-6 text-primary" />
+          <Card 
+            key={edu.id} 
+            className="glass-panel card-hover group relative overflow-hidden" 
+            data-animate="fade-in-left"
+            style={{ animationDelay: `${index * 0.2}s` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            <CardHeader className="relative">
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-gradient-primary rounded-xl shadow-glow">
+                    <GraduationCap className="h-6 w-6 text-white" />
                   </div>
-                  <div>
-                    <CardTitle className="text-xl">{edu.degree}</CardTitle>
-                    <div className="flex items-center gap-2 text-muted-foreground mt-1">
-                      <MapPin className="h-4 w-4" />
-                      <span className="text-sm">{edu.institution}</span>
+                  <div className="flex-1">
+                    <CardTitle className="text-xl md:text-2xl font-display font-bold mb-2 group-hover:text-primary transition-colors">
+                      {edu.degree}
+                    </CardTitle>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span className="font-medium">{edu.institution}</span>
                     </div>
                   </div>
                 </div>
-                <Badge variant="outline" className="flex items-center gap-1">
+                <Badge variant="outline" className="flex items-center gap-2 px-3 py-1 bg-secondary/20 border-primary/30">
                   <Calendar className="h-3 w-3" />
-                  {formatDate(edu.start_date)} - {formatDate(edu.end_date)}
+                  <span className="font-medium">
+                    {formatDate(edu.start_date)} - {formatDate(edu.end_date)}
+                  </span>
                 </Badge>
               </div>
             </CardHeader>
+            
             {edu.description && (
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
+              <CardContent className="relative pt-0">
+                <p className="text-muted-foreground/90 leading-relaxed">
                   {edu.description}
                 </p>
               </CardContent>

@@ -87,16 +87,29 @@ const Hero = () => {
       </div>
       <Hero3D />
       <div className="container py-24 md:py-32">
-        <p className="hero-subtitle mb-3 text-sm text-muted-foreground">📍 {about.location}</p>
-        <h1 className="hero-title text-4xl md:text-6xl font-premium font-black leading-tight title-gradient tracking-tight">
-          {about.name} <span className="text-primary font-display">—</span> <span className="font-premium italic">AI Engineer</span>
-        </h1>
-        <p className="hero-description mt-5 max-w-2xl text-base md:text-lg text-muted-foreground">
-          {about.summary}
+        <p className="hero-subtitle mb-4 text-sm text-muted-foreground/80 font-medium tracking-wide">
+          📍 {about.location}
         </p>
-        <div className="hero-buttons mt-8 flex gap-3">
-          <a href="#projects"><Button size="lg" className="btn-gradient hover-scale ripple">View Projects</Button></a>
-          <a href="#contact"><Button variant="outline" size="lg" className="glass-panel hover-scale">Contact Me</Button></a>
+        <h1 className="hero-title text-4xl md:text-7xl lg:text-8xl font-display font-black leading-[0.9] title-gradient tracking-tight mb-6">
+          {about.name}
+        </h1>
+        <h2 className="hero-subtitle text-xl md:text-2xl lg:text-3xl font-display font-semibold text-foreground/90 mb-6 leading-relaxed">
+          AI Engineer & Generative AI Developer
+        </h2>
+        <p className="hero-description max-w-xl text-base md:text-lg text-muted-foreground/90 leading-relaxed font-medium">
+          Building the future with ethical AI • 30 AI apps in 30 days challenge • BS AI Student at DUET
+        </p>
+        <div className="hero-buttons mt-10 flex flex-col sm:flex-row gap-4">
+          <a href="#projects">
+            <Button size="lg" className="btn-premium hover-scale text-lg px-8 py-6 rounded-xl font-semibold">
+              View My Work
+            </Button>
+          </a>
+          <a href="#contact">
+            <Button variant="outline" size="lg" className="glass-panel hover-scale text-lg px-8 py-6 rounded-xl font-semibold border-primary/30 hover:border-primary/60">
+              Let's Connect
+            </Button>
+          </a>
         </div>
       </div>
     </section>

@@ -9,28 +9,49 @@ const About = () => {
 
   return (
     <section id="about" className="container py-16 md:py-24" data-animate="fade-up">
-      <div className="grid md:grid-cols-2 gap-10 items-center">
-        <div className="order-2 md:order-1 animate-fade-in">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 title-gradient">
+      <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="order-2 lg:order-1" data-animate="fade-in-left">
+          <h2 className="text-3xl md:text-5xl font-display font-black mb-6 title-gradient">
             {aboutInfo?.heading || "About Me"}
           </h2>
-          <p className="text-muted-foreground leading-relaxed">
-            {aboutInfo?.content || "Passionate AI engineer building the future with cutting-edge technology and innovative solutions."}
-          </p>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {topSkills.map(s => (
-              <span key={s} className="rounded-full bg-secondary/60 text-secondary-foreground px-3 py-1 text-xs border border-border hover-scale">
-                {s}
+          <div className="space-y-4 text-lg leading-relaxed text-muted-foreground/90">
+            <p className="font-medium">
+              {aboutInfo?.content || "Passionate AI engineer building the future with cutting-edge technology and innovative solutions."}
+            </p>
+            <p className="text-base">
+              Currently pursuing BS in Artificial Intelligence at DUET, focusing on ethical AI development and real-world applications.
+            </p>
+          </div>
+          
+          {/* Credentials highlight */}
+          <div className="mt-8 p-6 rounded-2xl bg-gradient-card border border-primary/20">
+            <h3 className="font-display font-semibold text-primary mb-3">Featured Work</h3>
+            <p className="text-sm text-muted-foreground/80">
+              🚀 30 AI Apps in 30 Days Challenge • 🎯 RAG & Agentic AI Specialist • 🎨 Creative AI Solutions
+            </p>
+          </div>
+          
+          <div className="mt-8 flex flex-wrap gap-3">
+            {topSkills.map(skill => (
+              <span 
+                key={skill} 
+                className="px-4 py-2 rounded-xl bg-secondary/40 text-secondary-foreground text-sm font-medium border border-border/50 hover-scale transition-all hover:bg-secondary/60 hover:border-primary/30"
+              >
+                {skill}
               </span>
             ))}
           </div>
         </div>
-        <div className="order-1 md:order-2 flex justify-center">
-          <LazyImage 
-            src={aboutInfo?.image_url || maheen3DImage} 
-            alt="Maheen Touqeer - AI Engineer and Developer working with cutting-edge technology" 
-            className="h-40 w-40 md:h-56 md:w-56 rounded-xl shadow-[var(--shadow-glow)] hover-scale ring-2 ring-primary/20"
-          />
+        
+        <div className="order-1 lg:order-2 flex justify-center" data-animate="fade-in-right">
+          <div className="relative">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-20 blur-xl animate-pulse" />
+            <LazyImage 
+              src={aboutInfo?.image_url || maheen3DImage} 
+              alt="Maheen Touqeer - AI Engineer and Developer working with cutting-edge technology" 
+              className="relative h-48 w-48 md:h-64 md:w-64 lg:h-80 lg:w-80 rounded-2xl shadow-deep hover-scale ring-2 ring-primary/30 transition-all duration-500"
+            />
+          </div>
         </div>
       </div>
     </section>

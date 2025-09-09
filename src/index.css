@@ -50,12 +50,25 @@ All colors MUST be HSL.
     --sidebar-ring: 214 92% 55%;
 
     /* Premium tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(224 60% 6%), hsl(214 92% 18%));
-    --gradient-hero: radial-gradient(circle at 20% 10%, hsl(214 92% 20% / 0.6), transparent 40%),
-                     radial-gradient(circle at 80% 30%, hsl(214 92% 40% / 0.25), transparent 45%),
-                     linear-gradient(180deg, hsl(224 60% 6%), hsl(224 60% 4%));
-    --shadow-elevate: 0 10px 30px -10px hsl(214 92% 55% / 0.35);
-    --shadow-glow: 0 0 40px hsl(214 92% 55% / 0.35);
+    --primary-glow: 214 92% 70%;
+    --secondary-soft: 224 32% 20%;
+    --accent-bright: 214 100% 65%;
+    
+    /* Enhanced gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(214 92% 55%), hsl(214 92% 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(224 32% 12%), hsl(224 32% 20%));
+    --gradient-hero: radial-gradient(circle at 25% 15%, hsl(214 92% 25% / 0.8), transparent 50%),
+                     radial-gradient(circle at 75% 35%, hsl(214 100% 45% / 0.4), transparent 55%),
+                     radial-gradient(circle at 50% 80%, hsl(224 60% 15% / 0.6), transparent 60%),
+                     linear-gradient(135deg, hsl(224 60% 4%), hsl(224 60% 8%));
+    --gradient-card: linear-gradient(135deg, hsl(224 60% 6% / 0.8), hsl(214 92% 15% / 0.1));
+    --gradient-text: linear-gradient(135deg, hsl(210 100% 90%), hsl(214 92% 55%), hsl(214 100% 70%));
+    
+    /* Enhanced shadows */
+    --shadow-elevate: 0 10px 30px -10px hsl(214 92% 55% / 0.4);
+    --shadow-glow: 0 0 40px hsl(214 92% 55% / 0.4);
+    --shadow-soft: 0 4px 20px -4px hsl(224 60% 4% / 0.5);
+    --shadow-deep: 0 20px 50px -12px hsl(214 92% 55% / 0.25);
   }
 
   .dark {
@@ -119,21 +132,57 @@ All colors MUST be HSL.
   .btn-gradient { background-image: var(--gradient-primary); }
   .glass-panel { @apply bg-card/80 backdrop-blur border border-border; }
 
-  /* Premium typography and parallax helpers */
+  /* Enhanced typography and effects */
   .title-gradient {
-    background: linear-gradient(135deg, hsl(224 60% 4%), hsl(210 100% 90%), hsl(214 92% 55%), hsl(210 100% 90%), hsl(224 60% 4%));
-    background-size: 300% 300%;
+    background: var(--gradient-text);
+    background-size: 200% 200%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: gradient-shift 8s ease-in-out infinite;
+    animation: gradient-shift 6s ease-in-out infinite;
   }
   @keyframes gradient-shift {
-    0% { background-position: 0% 50%; }
-    33% { background-position: 50% 100%; }
-    66% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
+  
+  .text-glow { text-shadow: 0 0 20px hsl(214 92% 55% / 0.5); }
+  .card-hover { @apply transition-all duration-300 hover:shadow-elevate hover:-translate-y-1; }
+  .btn-premium { 
+    @apply relative overflow-hidden;
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-glow);
+  }
+  .btn-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+  /* Enhanced animations and effects */
+  .card-tilt { 
+    transform-style: preserve-3d; 
+    transition: transform 0.1s ease-out;
+  }
+  .glass-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .glass-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.6s;
+  }
+  .glass-shimmer:hover::before { left: 100%; }
   
   /* Glass input styling */
   .glass-input {

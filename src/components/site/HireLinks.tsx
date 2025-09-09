@@ -43,22 +43,15 @@ const HireLinks = () => {
   if (loading) {
     return (
       <section id="hire" className="container py-16 md:py-24">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold title-gradient">Hire Me</h2>
-          <p className="text-muted-foreground mt-4">Available for AI development projects</p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1,2,3].map(i => (
-            <Card key={i} className="glass-panel animate-pulse">
-              <CardHeader>
-                <div className="h-6 bg-muted rounded w-3/4"></div>
-                <div className="h-4 bg-muted rounded w-1/2"></div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-20 bg-muted rounded"></div>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="text-center max-w-4xl mx-auto">
+          <div className="h-12 bg-muted/50 rounded-xl animate-pulse mb-6 max-w-md mx-auto" />
+          <div className="h-6 bg-muted/50 rounded-lg animate-pulse mb-4 max-w-lg mx-auto" />
+          <div className="h-4 bg-muted/50 rounded animate-pulse mb-12 max-w-2xl mx-auto" />
+          <div className="flex flex-wrap justify-center gap-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-16 w-40 bg-muted/50 rounded-2xl animate-pulse" />
+            ))}
+          </div>
         </div>
       </section>
     );
@@ -66,82 +59,79 @@ const HireLinks = () => {
 
   return (
     <section id="hire" className="container py-16 md:py-24" data-animate="fade-up">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold title-gradient animate-fade-in">
-          Hire Me
+      <div className="text-center max-w-4xl mx-auto">
+        <h2 className="text-3xl md:text-5xl font-display font-black mb-6 title-gradient">
+          Let's Build Something Amazing
         </h2>
-        <p className="text-muted-foreground mt-4 animate-fade-in">
-          Available for AI development projects and freelance work
+        <p className="text-xl text-muted-foreground/90 mb-4 font-medium">
+          Ready to bring your AI vision to life?
         </p>
-      </div>
-
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        {displayLinks.map((link: any, index: number) => (
-          <Card key={link.platform || index} className="glass-panel hover-scale transition-all duration-300 group">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    {link.platform}
-                    {link.available && (
-                      <Badge variant="outline" className="text-xs bg-green-500/10 text-green-400 border-green-500/20">
-                        <Clock className="h-3 w-3 mr-1" />
-                        Available
-                      </Badge>
-                    )}
-                  </CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {link.description}
-                  </p>
-                </div>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                  <span className="font-medium">{link.rating}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  <span>{link.projects} projects</span>
-                </div>
-              </div>
-              
-              <div className="text-lg font-semibold text-primary">
-                {link.rate}
-              </div>
-              
+        <p className="text-muted-foreground/80 mb-12 max-w-2xl mx-auto">
+          From AI apps and chatbots to automation workflows and creative solutions — let's collaborate on your next breakthrough project.
+        </p>
+        
+        {/* Testimonial highlight */}
+        <div className="mb-12 p-8 rounded-2xl bg-gradient-card border border-primary/20 max-w-2xl mx-auto backdrop-blur-sm">
+          <p className="text-foreground/90 italic mb-3 text-lg">
+            "Trusted by innovators for cutting-edge AI solutions"
+          </p>
+          <div className="flex justify-center items-center gap-3">
+            <div className="flex">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="h-5 w-5 text-yellow-500 fill-current" />
+              ))}
+            </div>
+            <span className="text-sm font-medium text-primary">Featured AI Developer</span>
+          </div>
+        </div>
+        
+        <div className="flex flex-wrap justify-center gap-6 mb-12">
+          {displayLinks.map((link: any, idx: number) => (
+            <a 
+              key={link.platform || idx}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group"
+              data-animate="bounce-in"
+              style={{ animationDelay: `${idx * 0.2}s` }}
+            >
               <Button 
-                asChild 
-                className="w-full btn-gradient group-hover:shadow-[var(--shadow-elevate)] transition-all"
+                size="lg" 
+                className="btn-premium text-lg px-8 py-6 rounded-2xl font-semibold hover-scale shadow-glow group-hover:shadow-deep transition-all duration-300"
               >
-                <a 
-                  href={link.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2"
-                >
-                  View Profile
-                  <ExternalLink className="h-4 w-4" />
-                </a>
+                {link.platform}
+                <ExternalLink className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
               </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div className="mt-12 text-center">
-        <div className="bg-card/60 backdrop-blur border border-border rounded-xl p-6 max-w-2xl mx-auto">
-          <h3 className="text-xl font-semibold mb-2">Custom AI Solutions</h3>
-          <p className="text-muted-foreground mb-4">
+            </a>
+          ))}
+        </div>
+        
+        {/* Enhanced CTA */}
+        <div className="p-6 rounded-2xl bg-gradient-card border border-primary/20 max-w-2xl mx-auto backdrop-blur-sm">
+          <h3 className="text-xl font-display font-semibold mb-3 text-foreground">Custom AI Solutions</h3>
+          <p className="text-muted-foreground/90 mb-6 leading-relaxed">
             Need a custom AI application or consultation? I specialize in building end-to-end AI solutions 
             using the latest technologies including LangChain, Streamlit, Hugging Face, and more.
           </p>
-          <Button asChild variant="outline" className="glass-panel">
-            <a href="#contact">Get Custom Quote</a>
+          <Button asChild variant="outline" className="glass-panel hover-scale font-semibold">
+            <a href="#contact">Get Custom Quote →</a>
           </Button>
+        </div>
+        
+        {/* Status indicators */}
+        <div className="mt-12 text-center">
+          <p className="text-sm text-muted-foreground/60 flex flex-wrap justify-center items-center gap-4">
+            <span className="flex items-center gap-1">
+              💼 <span>Available for freelance</span>
+            </span>
+            <span className="flex items-center gap-1">
+              🚀 <span>Open to full-time opportunities</span>
+            </span>
+            <span className="flex items-center gap-1">
+              🤝 <span>Partnership ready</span>
+            </span>
+          </p>
         </div>
       </div>
     </section>
