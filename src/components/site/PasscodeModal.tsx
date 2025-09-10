@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { toast } from "@/hooks/use-toast";
+import { Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Shield } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface PasscodeModalProps {
   open: boolean;
@@ -16,6 +15,7 @@ interface PasscodeModalProps {
 const PasscodeModal = ({ open, onOpenChange }: PasscodeModalProps) => {
   const [passcode, setPasscode] = useState("");
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,25 +23,17 @@ const PasscodeModal = ({ open, onOpenChange }: PasscodeModalProps) => {
     if (!passcode.trim()) return;
 
     setLoading(true);
-
     try {
-      // Call our secure edge function to verify passcode
-      const { data, error } = await supabase.functions.invoke('verify-passcode', {
-        body: { passcode: passcode.trim() }
+      const { data, error } = await supabase.functions.invoke('verify-admin-passcode', {
+        body: { passcode }
       });
 
       if (error) {
-        console.error('Passcode verification error:', error);
-        toast({
-          title: "Verification Failed",
-          description: "Invalid passcode. Please try again.",
-          variant: "destructive",
-        });
-        return;
+        throw error;
       }
 
       if (data.success) {
-        // Store admin session in localStorage for this session
+        // Store admin token in localStorage
         localStorage.setItem('adminToken', data.adminToken);
         localStorage.setItem('adminTokenExpiry', data.expiresAt);
         
@@ -56,15 +48,15 @@ const PasscodeModal = ({ open, onOpenChange }: PasscodeModalProps) => {
       } else {
         toast({
           title: "Access Denied",
-          description: data.error || "Invalid passcode.",
+          description: data.error || "Invalid passcode",
           variant: "destructive",
         });
       }
     } catch (error: any) {
-      console.error('Error verifying passcode:', error);
+      console.error('Passcode verification error:', error);
       toast({
-        title: "Verification Error",
-        description: "Something went wrong. Please try again.",
+        title: "Access Denied",
+        description: "Invalid passcode or server error",
         variant: "destructive",
       });
     } finally {
@@ -76,26 +68,24 @@ const PasscodeModal = ({ open, onOpenChange }: PasscodeModalProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md glass-panel">
         <DialogHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
             <Shield className="h-6 w-6 text-primary" />
           </div>
-          <DialogTitle className="text-2xl title-gradient">Admin Access</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-xl font-bold">Admin Access</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             Enter the admin passcode to access the dashboard
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="passcode">Passcode</Label>
+          <div>
             <Input
-              id="passcode"
               type="password"
               placeholder="Enter admin passcode"
               value={passcode}
               onChange={(e) => setPasscode(e.target.value)}
-              required
-              className="glass-input text-center text-lg font-mono tracking-widest"
+              className="glass-input text-center text-lg tracking-wider"
+              disabled={loading}
               autoFocus
             />
           </div>
@@ -104,31 +94,28 @@ const PasscodeModal = ({ open, onOpenChange }: PasscodeModalProps) => {
             <Button
               type="button"
               variant="outline"
-              className="flex-1"
               onClick={() => {
                 onOpenChange(false);
                 setPasscode("");
               }}
+              className="flex-1"
               disabled={loading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="flex-1 btn-gradient"
+              className="flex-1 btn-premium"
               disabled={loading || !passcode.trim()}
             >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Access
+              {loading ? "Verifying..." : "Access"}
             </Button>
           </div>
         </form>
         
-        <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-          <p className="text-xs text-muted-foreground text-center">
-            This is a secure admin access point. Only authorized personnel should have the passcode.
-          </p>
-        </div>
+        <p className="text-xs text-muted-foreground text-center mt-4">
+          🔒 Secure admin access • Session expires in 24 hours
+        </p>
       </DialogContent>
     </Dialog>
   );
