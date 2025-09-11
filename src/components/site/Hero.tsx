@@ -99,6 +99,18 @@ const Hero = () => {
         <p className="hero-description max-w-xl text-base md:text-lg text-muted-foreground/90 leading-relaxed font-medium">
           Building the future with ethical AI • 30 AI apps in 30 days challenge • BS AI Student at DUET
         </p>
+        
+        {/* 3D Avatar */}
+        <div className="hero-avatar mt-8 mb-6" data-depth="0.3">
+          <div className="relative w-32 h-32 mx-auto md:mx-0">
+            <img 
+              src="/src/assets/maheen-avatar-3d.jpg" 
+              alt="Maheen - AI Engineer" 
+              className="w-full h-full rounded-full object-cover shadow-glow border-2 border-primary/30"
+            />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary/20 to-transparent animate-pulse" />
+          </div>
+        </div>
         <div className="hero-buttons mt-10 flex flex-col sm:flex-row gap-4">
           <a href="#projects">
             <Button size="lg" className="btn-premium hover-scale text-lg px-8 py-6 rounded-xl font-semibold">

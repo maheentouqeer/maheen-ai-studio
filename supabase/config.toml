@@ -76,3 +76,6 @@ verify_jwt = false
 
 [functions.verify-passcode]
 verify_jwt = false
+
+[functions.verify-admin-passcode]
+verify_jwt = false

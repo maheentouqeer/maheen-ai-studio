@@ -1,8 +1,10 @@
-import { useSupabaseData } from "@/hooks/useSupabaseData";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Star, Clock, MapPin } from "lucide-react";
+import { ExternalLink, Star, Trophy, Clock, CheckCircle } from "lucide-react";
+import { useSupabaseData } from "@/hooks/useSupabaseData";
+import TestimonialCard from "@/components/ui/TestimonialCard";
+import AnimatedCounter from "@/components/ui/AnimatedCounter";
 
 const HireLinks = () => {
   const { data: hireLinks, loading } = useSupabaseData<any>("hire_links");
@@ -132,6 +134,51 @@ const HireLinks = () => {
               🤝 <span>Partnership ready</span>
             </span>
           </p>
+        </div>
+
+        {/* Stats & Testimonials */}
+        <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Stats */}
+          <div className="space-y-8" data-animate="fade-right">
+            <h3 className="text-2xl font-bold text-center lg:text-left">Trusted by Clients Worldwide</h3>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-2">
+                  <AnimatedCounter end={50} suffix="+" />
+                </div>
+                <p className="text-sm text-muted-foreground">Projects Completed</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-2">
+                  <AnimatedCounter end={98} suffix="%" />
+                </div>
+                <p className="text-sm text-muted-foreground">Client Satisfaction</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-2">
+                  <AnimatedCounter end={30} suffix="+" />
+                </div>
+                <p className="text-sm text-muted-foreground">AI Applications Built</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-2">
+                  <AnimatedCounter end={24} suffix="h" />
+                </div>
+                <p className="text-sm text-muted-foreground">Avg Response Time</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Featured Testimonial */}
+          <div data-animate="fade-left">
+            <TestimonialCard
+              name="Sarah Johnson"
+              role="CTO"
+              company="TechStart Inc"
+              content="Maheen delivered an exceptional AI chatbot solution that transformed our customer support. Her expertise in generative AI and attention to detail made the entire process seamless."
+              rating={5}
+            />
+          </div>
         </div>
       </div>
     </section>

@@ -49,10 +49,12 @@ All colors MUST be HSL.
     --sidebar-border: 224 28% 18%;
     --sidebar-ring: 214 92% 55%;
 
-    /* Premium tokens */
-    --primary-glow: 214 92% 70%;
-    --secondary-soft: 224 32% 20%;
-    --accent-bright: 214 100% 65%;
+  /* Premium tokens */
+  --primary-glow: 214 92% 70%;
+  --secondary-soft: 224 32% 20%; 
+  --accent-bright: 214 100% 65%;
+  --neon-cyan: 180 100% 50%;
+  --royal-blue: 214 92% 55%;
     
     /* Enhanced gradients */
     --gradient-primary: linear-gradient(135deg, hsl(214 92% 55%), hsl(214 92% 65%));
@@ -64,11 +66,12 @@ All colors MUST be HSL.
     --gradient-card: linear-gradient(135deg, hsl(224 60% 6% / 0.8), hsl(214 92% 15% / 0.1));
     --gradient-text: linear-gradient(135deg, hsl(210 100% 90%), hsl(214 92% 55%), hsl(214 100% 70%));
     
-    /* Enhanced shadows */
-    --shadow-elevate: 0 10px 30px -10px hsl(214 92% 55% / 0.4);
-    --shadow-glow: 0 0 40px hsl(214 92% 55% / 0.4);
-    --shadow-soft: 0 4px 20px -4px hsl(224 60% 4% / 0.5);
-    --shadow-deep: 0 20px 50px -12px hsl(214 92% 55% / 0.25);
+  /* Enhanced shadows */
+  --shadow-elevate: 0 10px 30px -10px hsl(214 92% 55% / 0.4);
+  --shadow-glow: 0 0 40px hsl(214 92% 55% / 0.4);
+  --shadow-soft: 0 4px 20px -4px hsl(224 60% 4% / 0.5);
+  --shadow-deep: 0 20px 50px -12px hsl(214 92% 55% / 0.25);
+  --shadow-neon: 0 0 30px hsl(180 100% 50% / 0.3);
   }
 
   .dark {
