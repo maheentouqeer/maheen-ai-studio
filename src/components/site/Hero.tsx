@@ -87,9 +87,6 @@ const Hero = () => {
       </div>
       <Hero3D />
       <div className="container py-24 md:py-32">
-        <p className="hero-subtitle mb-4 text-sm text-muted-foreground/80 font-medium tracking-wide">
-          📍 {about.location}
-        </p>
         <h1 className="hero-title text-4xl md:text-7xl lg:text-8xl font-display font-black leading-[0.9] title-gradient tracking-tight mb-6">
           {about.name}
         </h1>
