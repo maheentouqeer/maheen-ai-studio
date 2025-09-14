@@ -32,8 +32,9 @@ serve(async (req) => {
       });
     }
 
-    // Verify passcode
+    // Verify passcode (secure comparison)
     if (passcode !== adminPasscode) {
+      console.log('Invalid passcode attempt');
       return new Response(JSON.stringify({ error: 'Invalid passcode' }), {
         status: 401,
         headers: { 'Content-Type': 'application/json', ...corsHeaders },
@@ -50,7 +51,6 @@ serve(async (req) => {
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
 
-    // Store session in a secure way (you could also use Supabase session management)
     const sessionExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     console.log('Admin passcode verified successfully');

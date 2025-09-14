@@ -1,7 +1,7 @@
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { topSkills } from "@/data/siteData";
 import LazyImage from "@/components/ui/LazyImage";
-import maheen3DImage from "@/assets/maheen-3d-illustration.jpg";
+import maheen3DAvatar from "@/assets/maheen-3d-avatar.jpg";
 
 const About = () => {
   const { data: aboutData, loading } = useSupabaseData<any>("about");
@@ -47,7 +47,7 @@ const About = () => {
           <div className="relative">
             <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-20 blur-xl animate-pulse" />
             <LazyImage 
-              src={aboutInfo?.image_url || maheen3DImage} 
+              src={aboutInfo?.image_url || maheen3DAvatar} 
               alt="Maheen Touqeer - AI Engineer and Developer working with cutting-edge technology" 
               className="relative h-48 w-48 md:h-64 md:w-64 lg:h-80 lg:w-80 rounded-2xl shadow-deep hover-scale ring-2 ring-primary/30 transition-all duration-500"
             />
