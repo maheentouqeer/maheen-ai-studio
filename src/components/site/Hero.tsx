@@ -3,48 +3,42 @@ import { Button } from "@/components/ui/button";
 import { about } from "@/data/siteData";
 import Hero3D from "./Hero3D";
 import { gsap } from "gsap";
-
 const Hero = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
-
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
 
     // GSAP Hero Animations
     const tl = gsap.timeline();
-    
+
     // Animate hero content
-    tl.from(".hero-title", { 
-      opacity: 0, 
-      y: 50, 
-      duration: 1, 
-      ease: "power3.out" 
-    })
-    .from(".hero-subtitle", { 
-      opacity: 0, 
-      y: 30, 
-      duration: 0.8, 
-      ease: "power3.out" 
-    }, "-=0.5")
-    .from(".hero-description", { 
-      opacity: 0, 
-      y: 20, 
-      duration: 0.8, 
-      ease: "power3.out" 
-    }, "-=0.4")
-    .from(".hero-buttons", { 
-      opacity: 0, 
-      y: 20, 
-      duration: 0.8, 
-      ease: "power3.out" 
-    }, "-=0.3")
-    .from("[data-depth]", { 
-      opacity: 0, 
-      scale: 0.8, 
-      duration: 1, 
-      stagger: 0.1, 
-      ease: "back.out(1.7)" 
+    tl.from(".hero-title", {
+      opacity: 0,
+      y: 50,
+      duration: 1,
+      ease: "power3.out"
+    }).from(".hero-subtitle", {
+      opacity: 0,
+      y: 30,
+      duration: 0.8,
+      ease: "power3.out"
+    }, "-=0.5").from(".hero-description", {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      ease: "power3.out"
+    }, "-=0.4").from(".hero-buttons", {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      ease: "power3.out"
+    }, "-=0.3").from("[data-depth]", {
+      opacity: 0,
+      scale: 0.8,
+      duration: 1,
+      stagger: 0.1,
+      ease: "back.out(1.7)"
     }, "-=0.6");
 
     // Parallax effect with GSAP
@@ -54,8 +48,7 @@ const Hero = () => {
       const cy = rect.top + rect.height / 2;
       const dx = (e.clientX - cx) / rect.width;
       const dy = (e.clientY - cy) / rect.height;
-      
-      el.querySelectorAll<HTMLElement>('[data-depth]').forEach((layer) => {
+      el.querySelectorAll<HTMLElement>('[data-depth]').forEach(layer => {
         const depth = Number(layer.dataset.depth || 0);
         const tx = -dx * depth * 20;
         const ty = -dy * depth * 20;
@@ -67,22 +60,30 @@ const Hero = () => {
         });
       });
     };
-    
     el.addEventListener('mousemove', onMove);
     return () => el.removeEventListener('mousemove', onMove);
   }, []);
-
-  return (
-    <section id="home" ref={sectionRef as any} className="relative overflow-hidden">
-      <div className="absolute inset-0 -z-10" aria-hidden style={{ background: 'var(--gradient-hero)' }} />
+  return <section id="home" ref={sectionRef as any} className="relative overflow-hidden">
+      <div className="absolute inset-0 -z-10" aria-hidden style={{
+      background: 'var(--gradient-hero)'
+    }} />
       {/* Parallax accent layers */}
-      <div className="absolute -z-10 parallax-layer" data-depth="0.2" style={{ top: '10%', left: '5%' }}>
+      <div className="absolute -z-10 parallax-layer" data-depth="0.2" style={{
+      top: '10%',
+      left: '5%'
+    }}>
         <span className="block h-24 w-24 md:h-36 md:w-36 rounded-full bg-primary/20 blur-2xl" />
       </div>
-      <div className="absolute -z-10 parallax-layer" data-depth="0.4" style={{ bottom: '15%', right: '8%' }}>
+      <div className="absolute -z-10 parallax-layer" data-depth="0.4" style={{
+      bottom: '15%',
+      right: '8%'
+    }}>
         <span className="block h-28 w-28 md:h-44 md:w-44 rounded-full bg-primary/30 blur-3xl" />
       </div>
-      <div className="absolute -z-10 parallax-layer" data-depth="0.1" style={{ top: '35%', right: '35%' }}>
+      <div className="absolute -z-10 parallax-layer" data-depth="0.1" style={{
+      top: '35%',
+      right: '35%'
+    }}>
         <span className="block h-14 w-14 md:h-20 md:w-20 rounded-full bg-primary/25 blur-xl" />
       </div>
       <Hero3D />
@@ -98,16 +99,7 @@ const Hero = () => {
         </p>
         
         {/* 3D Avatar */}
-        <div className="hero-avatar mt-8 mb-6" data-depth="0.3">
-          <div className="relative w-32 h-32 mx-auto md:mx-0">
-            <img 
-              src="/src/assets/maheen-avatar-3d.jpg" 
-              alt="Maheen - AI Engineer" 
-              className="w-full h-full rounded-full object-cover shadow-glow border-2 border-primary/30"
-            />
-            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary/20 to-transparent animate-pulse" />
-          </div>
-        </div>
+        
         <div className="hero-buttons mt-10 flex flex-col sm:flex-row gap-4">
           <a href="#projects">
             <Button size="lg" className="btn-premium hover-scale text-lg px-8 py-6 rounded-xl font-semibold">
@@ -121,9 +113,6 @@ const Hero = () => {
           </a>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
-
