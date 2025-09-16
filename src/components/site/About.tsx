@@ -12,7 +12,7 @@ const About = () => {
       <div className="grid lg:grid-cols-2 gap-16 items-center">
         <div className="order-2 lg:order-1" data-animate="fade-in-left">
           <h2 className="text-3xl md:text-5xl font-display font-black mb-6 title-gradient">
-            {aboutInfo?.heading || "About Me"}
+            {aboutInfo?.heading?.replace(/demo/gi, '') || "About Me"}
           </h2>
           <div className="space-y-4 text-lg leading-relaxed text-muted-foreground/90">
             <p className="font-medium">
