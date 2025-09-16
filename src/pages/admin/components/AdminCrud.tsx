@@ -6,13 +6,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import ImageUpload from "@/components/ui/ImageUpload";
 
 type TableName = keyof Database['public']['Tables'];
 
 export type ColumnDef = {
   key: string;
   label: string;
-  type?: 'text' | 'textarea' | 'number' | 'date' | 'select';
+  type?: 'text' | 'textarea' | 'number' | 'date' | 'select' | 'image';
   required?: boolean;
   options?: { label: string; value: string }[];
   optionsSource?: { table: TableName; value: string; label: string };
@@ -32,31 +33,38 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
 
   const visibleColumns = useMemo(() => columns.filter(c => c.key !== 'id'), [columns]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        // Load select options from sources
-        const opt: Record<string, { label: string; value: string }[]> = {};
-        await Promise.all(columns.map(async (c) => {
-          if (c.type === 'select' && c.optionsSource) {
-            const { data } = await (supabase.from as any)(c.optionsSource.table).select(`${c.optionsSource.value}, ${c.optionsSource.label}`);
-            opt[c.key] = (data || []).map((r: any) => ({ value: r[c.optionsSource!.value], label: r[c.optionsSource!.label] }));
-          } else if (c.type === 'select' && c.options) {
-            opt[c.key] = c.options;
-          }
-        }));
-        setOptionsMap(opt);
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      // Load select options from sources
+      const opt: Record<string, { label: string; value: string }[]> = {};
+      await Promise.all(columns.map(async (c) => {
+        if (c.type === 'select' && c.optionsSource) {
+          const { data } = await (supabase.from as any)(c.optionsSource.table).select(`${c.optionsSource.value}, ${c.optionsSource.label}`);
+          opt[c.key] = (data || []).map((r: any) => ({ value: r[c.optionsSource!.value], label: r[c.optionsSource!.label] }));
+        } else if (c.type === 'select' && c.options) {
+          opt[c.key] = c.options;
+        }
+      }));
+      setOptionsMap(opt);
 
-        const { data, error } = await (supabase.from as any)(table).select('*').limit(200);
-        if (error) throw error;
-        setRows(data || []);
-      } catch (e: any) {
-        console.error(e);
-        toast({ title: 'Load failed', description: e.message });
-      } finally {
-        setLoading(false);
-      }
-    })();
+      const { data, error } = await (supabase.from as any)(table).select('*').order('created_at', { ascending: false }).limit(200);
+      if (error) throw error;
+      setRows(data || []);
+    } catch (e: any) {
+      console.error('Load data error:', e);
+      toast({ 
+        title: 'Load failed', 
+        description: e.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table]);
 
@@ -76,31 +84,83 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
 
   const save = async () => {
     try {
+      // Validate required fields
+      const missingFields = columns
+        .filter(c => c.required && !form[c.key])
+        .map(c => c.label);
+      
+      if (missingFields.length > 0) {
+        toast({ 
+          title: 'Missing required fields', 
+          description: `Please fill: ${missingFields.join(', ')}`,
+          variant: "destructive"
+        });
+        return;
+      }
+
       if (editing && editing.id) {
-        const { data, error } = await (supabase.from as any)(table).update(form).eq('id', editing.id).select('*').maybeSingle();
+        const { data, error } = await (supabase.from as any)(table)
+          .update(form)
+          .eq('id', editing.id)
+          .select('*')
+          .maybeSingle();
+        
         if (error) throw error;
-        setRows((r) => r.map((x) => (x.id === editing.id ? data : x)) as any);
-        toast({ title: 'Updated' });
+        
+        // Reload data to ensure consistency
+        await loadData();
+        toast({ 
+          title: 'Updated successfully',
+          description: `${table} entry has been updated.`
+        });
       } else {
-        const { data, error } = await (supabase.from as any)(table).insert(form).select('*').maybeSingle();
+        const { data, error } = await (supabase.from as any)(table)
+          .insert(form)
+          .select('*')
+          .maybeSingle();
+        
         if (error) throw error;
-        setRows((r) => [data, ...r]);
-        toast({ title: 'Created' });
+        
+        // Reload data to ensure consistency
+        await loadData();
+        toast({ 
+          title: 'Created successfully',
+          description: `New ${table} entry has been created.`
+        });
       }
       cancel();
     } catch (e: any) {
-      console.error(e);
-      toast({ title: 'Save failed', description: e.message });
+      console.error('Save error:', e);
+      toast({ 
+        title: 'Save failed', 
+        description: e.message || 'An error occurred while saving.',
+        variant: "destructive"
+      });
     }
   };
 
   const remove = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+      return;
+    }
+    
     try {
-      await (supabase.from as any)(table).delete().eq('id', id);
-      setRows((r) => r.filter((x) => x.id !== id));
-      toast({ title: 'Deleted' });
+      const { error } = await (supabase.from as any)(table).delete().eq('id', id);
+      if (error) throw error;
+      
+      // Reload data to ensure consistency
+      await loadData();
+      toast({ 
+        title: 'Deleted successfully',
+        description: `${table} entry has been removed.`
+      });
     } catch (e: any) {
-      toast({ title: 'Delete failed', description: e.message });
+      console.error('Delete error:', e);
+      toast({ 
+        title: 'Delete failed', 
+        description: e.message || 'An error occurred while deleting.',
+        variant: "destructive"
+      });
     }
   };
 
@@ -158,20 +218,27 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
                   <Input type="number" value={form[c.key] ?? ''} onChange={(e) => change(c.key, e.target.value === '' ? null : Number(e.target.value))} />
                 ) : c.type === 'date' ? (
                   <Input type="date" value={form[c.key] ?? ''} onChange={(e) => change(c.key, e.target.value || null)} />
-                ) : c.type === 'select' ? (
-                  <Select onValueChange={(v) => change(c.key, v)} value={form[c.key] ?? ''}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={`Select ${c.label}`} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(optionsMap[c.key] || []).map((o) => (
-                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <Input value={form[c.key] ?? ''} onChange={(e) => change(c.key, e.target.value)} />
-                )}
+                 ) : c.type === 'select' ? (
+                   <Select onValueChange={(v) => change(c.key, v)} value={form[c.key] ?? ''}>
+                     <SelectTrigger>
+                       <SelectValue placeholder={`Select ${c.label}`} />
+                     </SelectTrigger>
+                     <SelectContent>
+                       {(optionsMap[c.key] || []).map((o) => (
+                         <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                       ))}
+                     </SelectContent>
+                   </Select>
+                 ) : c.type === 'image' ? (
+                   <ImageUpload 
+                     value={form[c.key] ?? ''} 
+                     onChange={(url) => change(c.key, url)}
+                     placeholder={`Upload ${c.label}`}
+                     path={`${table}/${c.key}`}
+                   />
+                 ) : (
+                   <Input value={form[c.key] ?? ''} onChange={(e) => change(c.key, e.target.value)} />
+                 )}
               </div>
             ))}
             <div className="flex gap-2">

@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import AdminCrud, { type ColumnDef } from "@/pages/admin/components/AdminCrud";
 import KnowledgeTrainer from "@/pages/admin/components/KnowledgeTrainer";
 import ContactsManager from "@/pages/admin/components/ContactsManager";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import { LogOut, Shield, Database, Users, Brain, Mail } from "lucide-react";
 
 const Admin = () => {
@@ -124,7 +125,7 @@ const Admin = () => {
   const aboutColumns: ColumnDef[] = [
     { key: 'heading', label: 'Heading', type: 'text', required: true },
     { key: 'content', label: 'Content', type: 'textarea' },
-    { key: 'image_url', label: 'Image URL', type: 'text' },
+    { key: 'image_url', label: 'Profile Image', type: 'image' },
   ];
 
   const skillsColumns: ColumnDef[] = [
@@ -157,7 +158,7 @@ const Admin = () => {
     { key: 'title', label: 'Title', type: 'text', required: true },
     { key: 'description', label: 'Description', type: 'textarea' },
     { key: 'category_id', label: 'Category', type: 'select', optionsSource: { table: 'categories', value: 'id', label: 'name' } },
-    { key: 'media_url', label: 'Media URL', type: 'text' },
+    { key: 'media_url', label: 'Project Image', type: 'image' },
     { key: 'link_url', label: 'Link URL', type: 'text' },
     { key: 'published', label: 'Published', type: 'select', options: [{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }] },
   ];
@@ -219,7 +220,9 @@ const Admin = () => {
               <Database className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">About Section Management</h2>
             </div>
-            <AdminCrud table="about" columns={aboutColumns} />
+            <ErrorBoundary>
+              <AdminCrud table="about" columns={aboutColumns} />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="skills" className="space-y-4">
@@ -227,7 +230,9 @@ const Admin = () => {
               <Database className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">Skills Management</h2>
             </div>
-            <AdminCrud table="skills" columns={skillsColumns} />
+            <ErrorBoundary>
+              <AdminCrud table="skills" columns={skillsColumns} />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="education" className="space-y-4">
@@ -235,7 +240,9 @@ const Admin = () => {
               <Database className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">Education Management</h2>
             </div>
-            <AdminCrud table="education" columns={educationColumns} />
+            <ErrorBoundary>
+              <AdminCrud table="education" columns={educationColumns} />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="experience" className="space-y-4">
@@ -243,7 +250,9 @@ const Admin = () => {
               <Database className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">Experience Management</h2>
             </div>
-            <AdminCrud table="experience" columns={experienceColumns} />
+            <ErrorBoundary>
+              <AdminCrud table="experience" columns={experienceColumns} />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="categories" className="space-y-4">
@@ -251,7 +260,9 @@ const Admin = () => {
               <Database className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">Categories Management</h2>
             </div>
-            <AdminCrud table="categories" columns={categoriesColumns} />
+            <ErrorBoundary>
+              <AdminCrud table="categories" columns={categoriesColumns} />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="projects" className="space-y-4">
@@ -259,7 +270,9 @@ const Admin = () => {
               <Database className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">Projects Management</h2>
             </div>
-            <AdminCrud table="projects" columns={projectsColumns} />
+            <ErrorBoundary>
+              <AdminCrud table="projects" columns={projectsColumns} />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="hirelinks" className="space-y-4">
@@ -267,7 +280,9 @@ const Admin = () => {
               <Database className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">Hire Links Management</h2>
             </div>
-            <AdminCrud table="hire_links" columns={hireLinksColumns} />
+            <ErrorBoundary>
+              <AdminCrud table="hire_links" columns={hireLinksColumns} />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="knowledge" className="space-y-4">
@@ -275,7 +290,9 @@ const Admin = () => {
               <Brain className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">AI Assistant Knowledge</h2>
             </div>
-            <KnowledgeTrainer />
+            <ErrorBoundary>
+              <KnowledgeTrainer />
+            </ErrorBoundary>
           </TabsContent>
 
           <TabsContent value="contacts" className="space-y-4">
@@ -283,7 +300,9 @@ const Admin = () => {
               <Mail className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">Contact Submissions</h2>
             </div>
-            <ContactsManager />
+            <ErrorBoundary>
+              <ContactsManager />
+            </ErrorBoundary>
           </TabsContent>
         </Tabs>
       </main>
