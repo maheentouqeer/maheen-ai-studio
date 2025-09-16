@@ -62,13 +62,16 @@ const HireLinks = () => {
   return (
     <section id="hire" className="container py-16 md:py-24" data-animate="fade-up">
       <div className="text-center max-w-4xl mx-auto">
-        <h2 className="text-3xl md:text-5xl font-display font-black mb-6 title-gradient">
-          Let's Build Something Amazing
-        </h2>
-        <p className="text-xl text-muted-foreground/90 mb-4 font-medium">
+        <div className="heading-backdrop inline-block mb-8" data-animate="heading-reveal">
+          <h2 className="section-heading">
+            Let's Build Something Amazing
+          </h2>
+        </div>
+        <p className="text-xl text-muted-foreground/90 mb-4 font-medium" data-animate="fade-up">
           Ready to bring your AI vision to life?
         </p>
-        <p className="text-muted-foreground/80 mb-12 max-w-2xl mx-auto">
+        <p className="text-muted-foreground/80 mb-12 max-w-2xl mx-auto" data-animate="fade-up"
+           style={{ animationDelay: '0.2s' }}>
           From AI apps and chatbots to automation workflows and creative solutions — let's collaborate on your next breakthrough project.
         </p>
         

@@ -34,10 +34,12 @@ const Experience = () => {
   return (
     <section id="experience" className="container py-16 md:py-24" data-animate="fade-up">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-5xl font-display font-black mb-4 title-gradient">
-          Professional Experience
-        </h2>
-        <p className="text-muted-foreground/80 max-w-2xl mx-auto text-lg">
+        <div className="heading-backdrop inline-block mb-8" data-animate="heading-reveal">
+          <h2 className="section-heading">
+            Professional Experience
+          </h2>
+        </div>
+        <p className="text-muted-foreground/80 max-w-2xl mx-auto text-lg" data-animate="fade-up">
           Building innovative AI solutions and driving technological advancement
         </p>
       </div>
@@ -47,7 +49,7 @@ const Experience = () => {
           <Card 
             key={exp.id} 
             className="glass-panel card-hover group relative overflow-hidden" 
-            data-animate="fade-in-right"
+            data-animate="fade-left"
             style={{ animationDelay: `${index * 0.2}s` }}
           >
             <div className="absolute inset-0 bg-gradient-to-l from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

@@ -42,10 +42,12 @@ const Projects = () => {
   return (
     <section id="projects" className="container py-16 md:py-24" data-animate="fade-up">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-5xl font-display font-black mb-6 title-gradient">
-          Featured Projects
-        </h2>
-        <p className="text-muted-foreground/80 max-w-2xl mx-auto text-lg mb-8">
+        <div className="heading-backdrop inline-block mb-8" data-animate="heading-reveal">
+          <h2 className="section-heading">
+            Featured Projects
+          </h2>
+        </div>
+        <p className="text-muted-foreground/80 max-w-2xl mx-auto text-lg mb-8" data-animate="fade-up">
           Innovative AI solutions and creative applications showcasing cutting-edge technology
         </p>
         

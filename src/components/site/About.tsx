@@ -10,10 +10,12 @@ const About = () => {
   return (
     <section id="about" className="container py-16 md:py-24" data-animate="fade-up">
       <div className="grid lg:grid-cols-2 gap-16 items-center">
-        <div className="order-2 lg:order-1" data-animate="fade-in-left">
-          <h2 className="text-3xl md:text-5xl font-display font-black mb-6 title-gradient">
+      <div className="order-2 lg:order-1" data-animate="fade-right">
+        <div className="heading-backdrop mb-8" data-animate="heading-reveal">
+          <h2 className="section-heading text-center lg:text-left">
             {aboutInfo?.heading || "About Me"}
           </h2>
+        </div>
           <div className="space-y-4 text-lg leading-relaxed text-muted-foreground/90">
             <p className="font-medium">
               {aboutInfo?.content || "Passionate AI engineer building the future with cutting-edge technology and innovative solutions."}
@@ -43,7 +45,7 @@ const About = () => {
           </div>
         </div>
         
-        <div className="order-1 lg:order-2 flex justify-center" data-animate="fade-in-right">
+        <div className="order-1 lg:order-2 flex justify-center" data-animate="fade-left">
           <div className="relative">
             <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-20 blur-xl animate-pulse" />
             <LazyImage 

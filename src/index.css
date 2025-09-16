@@ -143,10 +143,54 @@ All colors MUST be HSL.
     background-clip: text;
     color: transparent;
     animation: gradient-shift 6s ease-in-out infinite;
+    text-shadow: 0 0 30px hsl(214 92% 55% / 0.3);
+    font-weight: 900;
+    letter-spacing: -0.02em;
   }
+  
+  /* Section headings with enhanced visibility */
+  .section-heading {
+    font-size: clamp(2rem, 8vw, 4rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    background: var(--gradient-text);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient-shift 6s ease-in-out infinite;
+    text-shadow: 0 0 30px hsl(214 92% 55% / 0.4);
+    position: relative;
+  }
+  
+  .section-heading::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+    box-shadow: 0 0 20px hsl(214 92% 55% / 0.6);
+  }
+  
   @keyframes gradient-shift {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
+  }
+  
+  /* Heading backdrop for better contrast */
+  .heading-backdrop {
+    position: relative;
+    padding: 2rem 1.5rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, hsl(220 70% 8% / 0.9), hsl(220 65% 12% / 0.8));
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(214 92% 55% / 0.2);
+    box-shadow: 0 8px 32px hsl(214 92% 55% / 0.1);
   }
   
   .text-glow { text-shadow: 0 0 20px hsl(214 92% 55% / 0.5); }
@@ -170,6 +214,40 @@ All colors MUST be HSL.
   .card-tilt { 
     transform-style: preserve-3d; 
     transition: transform 0.1s ease-out;
+  }
+  
+  /* Premium scroll reveal animations */
+  .reveal-up {
+    opacity: 0;
+    transform: translateY(60px) scale(0.95);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .reveal-up.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-60px) rotateY(-15deg);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .reveal-left.active {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+  }
+  
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.8) rotateZ(-5deg);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .reveal-scale.active {
+    opacity: 1;
+    transform: scale(1) rotateZ(0);
   }
   .glass-shimmer {
     position: relative;
@@ -209,9 +287,67 @@ All colors MUST be HSL.
   }
   .parallax-layer { will-change: transform; transition: transform 0.2s ease-out; }
 
-  /* Animated logo dot */
-  .logo-dot { display: inline-block; width: 8px; height: 8px; background: hsl(var(--primary)); border-radius: 9999px; box-shadow: var(--shadow-glow); animation: logo-move 3s ease-in-out infinite; }
-  @keyframes logo-move { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+  /* Responsive improvements for mobile */
+  @media (max-width: 640px) {
+    .section-heading {
+      font-size: clamp(1.8rem, 8vw, 2.5rem);
+      line-height: 1.1;
+    }
+    
+    .heading-backdrop {
+      padding: 1.5rem 1rem;
+      margin: 0 -1rem;
+      width: calc(100% + 2rem);
+    }
+    
+    .section-heading::after {
+      width: 40px;
+      height: 3px;
+    }
+  }
+  
+  /* Tablet adjustments */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .section-heading {
+      font-size: clamp(2.5rem, 6vw, 3.5rem);
+    }
+    
+    .heading-backdrop {
+      padding: 1.75rem 1.25rem;
+    }
+  }
+  
+  /* Reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .section-heading {
+      animation: none;
+    }
+    
+    .reveal-up,
+    .reveal-left,
+    .reveal-scale {
+      transition: none;
+      opacity: 1;
+      transform: none;
+    }
+    
+    [data-animate] {
+      animation: none !important;
+    }
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .section-heading {
+      text-shadow: none;
+      filter: contrast(1.2);
+    }
+    
+    .heading-backdrop {
+      border: 2px solid hsl(var(--primary));
+      background: hsl(var(--background));
+    }
+  }
   
   /* Ripple effect for buttons */
   .ripple {

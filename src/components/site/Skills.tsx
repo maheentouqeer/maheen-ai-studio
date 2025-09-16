@@ -8,10 +8,12 @@ const Skills = () => {
   return (
     <section id="skills" className="container py-16 md:py-24" data-animate="fade-up">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-5xl font-display font-black mb-4 title-gradient">
-          Technical Skills
-        </h2>
-        <p className="text-muted-foreground/80 max-w-2xl mx-auto text-lg">
+        <div className="heading-backdrop inline-block mb-8" data-animate="heading-reveal">
+          <h2 className="section-heading">
+            Technical Skills
+          </h2>
+        </div>
+        <p className="text-muted-foreground/80 max-w-2xl mx-auto text-lg" data-animate="fade-up">
           Expertise in AI technologies and programming languages
         </p>
       </div>

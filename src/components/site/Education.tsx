@@ -34,10 +34,12 @@ const Education = () => {
   return (
     <section id="education" className="container py-16 md:py-24" data-animate="fade-up">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-5xl font-display font-black mb-4 title-gradient">
-          Education Journey
-        </h2>
-        <p className="text-muted-foreground/80 max-w-2xl mx-auto text-lg">
+        <div className="heading-backdrop inline-block mb-8" data-animate="heading-reveal">
+          <h2 className="section-heading">
+            Education Journey
+          </h2>
+        </div>
+        <p className="text-muted-foreground/80 max-w-2xl mx-auto text-lg" data-animate="fade-up">
           Academic foundation and continuous learning in AI and technology
         </p>
       </div>
@@ -47,7 +49,7 @@ const Education = () => {
           <Card 
             key={edu.id} 
             className="glass-panel card-hover group relative overflow-hidden" 
-            data-animate="fade-in-left"
+            data-animate="fade-right"
             style={{ animationDelay: `${index * 0.2}s` }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
