@@ -17,21 +17,27 @@ export type Database = {
       about: {
         Row: {
           content: string | null
+          created_at: string
           heading: string
           id: string
           image_url: string | null
+          updated_at: string
         }
         Insert: {
           content?: string | null
+          created_at?: string
           heading: string
           id?: string
           image_url?: string | null
+          updated_at?: string
         }
         Update: {
           content?: string | null
+          created_at?: string
           heading?: string
           id?: string
           image_url?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -76,16 +82,22 @@ export type Database = {
       }
       categories: {
         Row: {
+          created_at: string
           id: string
           name: string
+          updated_at: string
         }
         Insert: {
+          created_at?: string
           id?: string
           name: string
+          updated_at?: string
         }
         Update: {
+          created_at?: string
           id?: string
           name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -118,55 +130,67 @@ export type Database = {
       }
       education: {
         Row: {
+          created_at: string
           degree: string | null
           description: string | null
           end_date: string | null
           id: string
           institution: string
           start_date: string | null
+          updated_at: string
         }
         Insert: {
+          created_at?: string
           degree?: string | null
           description?: string | null
           end_date?: string | null
           id?: string
           institution: string
           start_date?: string | null
+          updated_at?: string
         }
         Update: {
+          created_at?: string
           degree?: string | null
           description?: string | null
           end_date?: string | null
           id?: string
           institution?: string
           start_date?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
       experience: {
         Row: {
           company: string | null
+          created_at: string
           description: string | null
           end_date: string | null
           id: string
           role: string | null
           start_date: string | null
+          updated_at: string
         }
         Insert: {
           company?: string | null
+          created_at?: string
           description?: string | null
           end_date?: string | null
           id?: string
           role?: string | null
           start_date?: string | null
+          updated_at?: string
         }
         Update: {
           company?: string | null
+          created_at?: string
           description?: string | null
           end_date?: string | null
           id?: string
           role?: string | null
           start_date?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -212,30 +236,36 @@ export type Database = {
       projects: {
         Row: {
           category_id: string | null
+          created_at: string
           description: string | null
           id: string
           link_url: string | null
           media_url: string | null
           published: boolean
           title: string
+          updated_at: string
         }
         Insert: {
           category_id?: string | null
+          created_at?: string
           description?: string | null
           id?: string
           link_url?: string | null
           media_url?: string | null
           published?: boolean
           title: string
+          updated_at?: string
         }
         Update: {
           category_id?: string | null
+          created_at?: string
           description?: string | null
           id?: string
           link_url?: string | null
           media_url?: string | null
           published?: boolean
           title?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -271,21 +301,27 @@ export type Database = {
       skills: {
         Row: {
           category: string | null
+          created_at: string
           id: string
           proficiency: number | null
           skill_name: string
+          updated_at: string
         }
         Insert: {
           category?: string | null
+          created_at?: string
           id?: string
           proficiency?: number | null
           skill_name: string
+          updated_at?: string
         }
         Update: {
           category?: string | null
+          created_at?: string
           id?: string
           proficiency?: number | null
           skill_name?: string
+          updated_at?: string
         }
         Relationships: []
       }
