@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { about } from "@/data/siteData";
 import Hero3D from "./Hero3D";
 import { gsap } from "gsap";
@@ -88,40 +87,30 @@ const Hero = () => {
         <span className="block h-14 w-14 md:h-20 md:w-20 rounded-full bg-primary/25 blur-xl" />
       </div>
       <Hero3D />
-      <div className="container relative z-10 py-24 md:py-32 lg:py-40">
-        <div className="max-w-5xl mx-auto text-center space-y-8" data-animate="fade-up">
-          <div className="space-y-6">
-            <div className="inline-block animate-fade-in">
-              <Badge variant="outline" className="px-6 py-3 text-sm font-medium bg-gradient-primary/10 border-primary/40 backdrop-blur-xl shadow-glow">
-                <span className="bg-gradient-primary bg-clip-text text-transparent font-semibold">
-                  ✨ AI Engineer & Creative Developer
-                </span>
-              </Badge>
-            </div>
-            
-            <h1 className="hero-title hero-name text-6xl md:text-8xl lg:text-9xl" data-text="Maheen Touqeer" data-animate="zoom-in">
-              Maheen Touqeer
-            </h1>
-            
-            <p className="hero-description text-xl md:text-2xl lg:text-3xl text-muted-foreground/90 max-w-3xl mx-auto leading-relaxed font-light" data-animate="fade-up">
-              Building intelligent systems that transform ideas into reality through 
-              <span className="bg-gradient-accent bg-clip-text text-transparent font-semibold"> cutting-edge AI</span> and 
-              <span className="bg-gradient-accent bg-clip-text text-transparent font-semibold"> innovative technology</span>
-            </p>
-          </div>
-          
-          <div className="hero-buttons mt-12 flex flex-col sm:flex-row gap-4 justify-center" data-animate="fade-up">
-            <a href="#projects">
-              <Button size="lg" className="btn-premium hover-scale text-lg px-10 py-7 rounded-2xl font-bold shadow-intense">
-                View My Work
-              </Button>
-            </a>
-            <a href="#contact">
-              <Button variant="outline" size="lg" className="glass-panel hover-scale text-lg px-10 py-7 rounded-2xl font-bold border-2 border-primary/40 hover:border-primary/70 hover:bg-primary/5">
-                Let's Connect
-              </Button>
-            </a>
-          </div>
+      <div className="container py-24 md:py-32">
+        <h1 className="hero-title hero-name text-5xl md:text-7xl lg:text-8xl xl:text-9xl mb-6">
+          {about.name}
+        </h1>
+        <h2 className="hero-subtitle text-xl md:text-2xl lg:text-3xl font-display font-semibold text-foreground/90 mb-6 leading-relaxed">
+          AI Engineer & Generative AI Developer
+        </h2>
+        <p className="hero-description max-w-xl text-base md:text-lg text-muted-foreground/90 leading-relaxed font-medium">
+          Building the future with ethical AI • 30 AI apps in 30 days challenge • BS AI Student at DUET
+        </p>
+        
+        {/* 3D Avatar */}
+        
+        <div className="hero-buttons mt-10 flex flex-col sm:flex-row gap-4">
+          <a href="#projects">
+            <Button size="lg" className="btn-premium hover-scale text-lg px-8 py-6 rounded-xl font-semibold">
+              View My Work
+            </Button>
+          </a>
+          <a href="#contact">
+            <Button variant="outline" size="lg" className="glass-panel hover-scale text-lg px-8 py-6 rounded-xl font-semibold border-primary/30 hover:border-primary/60">
+              Let's Connect
+            </Button>
+          </a>
         </div>
       </div>
     </section>;

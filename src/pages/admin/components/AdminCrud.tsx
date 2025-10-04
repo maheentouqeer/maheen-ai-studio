@@ -219,14 +219,7 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
                 ) : c.type === 'date' ? (
                   <Input type="date" value={form[c.key] ?? ''} onChange={(e) => change(c.key, e.target.value || null)} />
                  ) : c.type === 'select' ? (
-                   <Select 
-                     onValueChange={(v) => {
-                       // Handle boolean conversion for true/false string values
-                       const value = v === 'true' ? true : v === 'false' ? false : v;
-                       change(c.key, value);
-                     }} 
-                     value={String(form[c.key] ?? '')}
-                   >
+                   <Select onValueChange={(v) => change(c.key, v)} value={form[c.key] ?? ''}>
                      <SelectTrigger>
                        <SelectValue placeholder={`Select ${c.label}`} />
                      </SelectTrigger>
