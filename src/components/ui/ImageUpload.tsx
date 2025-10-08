@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
@@ -29,6 +29,11 @@ const ImageUpload = ({
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string>(value || "");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync preview with value prop changes
+  useEffect(() => {
+    setPreview(value || "");
+  }, [value]);
 
   const generateFileName = (originalName: string) => {
     const timestamp = Date.now();
