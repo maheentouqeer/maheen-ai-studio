@@ -1,14 +1,12 @@
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { topSkills } from "@/data/siteData";
 import LazyImage from "@/components/ui/LazyImage";
+import maheen3DAvatar from "@/assets/maheen-3d-avatar.jpg";
 import maheenTouqeer from "@/assets/maheen-touqeer.jpg";
 
 const About = () => {
   const { data: aboutData, loading } = useSupabaseData<any>("about");
   const aboutInfo = aboutData.length > 0 ? aboutData[0] : null;
-  
-  // Use database image if available, otherwise fall back to imported image
-  const profileImage = aboutInfo?.image_url || maheenTouqeer;
 
   return (
     <section id="about" className="container py-16 md:py-24" data-animate="fade-up">
@@ -52,7 +50,7 @@ const About = () => {
           <div className="relative">
             <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-20 blur-xl animate-pulse" />
             <LazyImage 
-              src={profileImage} 
+              src={maheenTouqeer} 
               alt="Maheen Touqeer - AI Engineer and Developer working with cutting-edge technology" 
               className="relative h-48 w-48 md:h-64 md:w-64 lg:h-80 lg:w-80 rounded-2xl shadow-deep hover-scale ring-2 ring-primary/30 transition-all duration-500 object-cover"
             />

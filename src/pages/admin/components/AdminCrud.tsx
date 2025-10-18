@@ -69,25 +69,8 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
   }, [table]);
 
   const startEdit = (row?: any) => {
-    if (row) {
-      // Convert boolean values to strings for select dropdowns
-      const formData = { ...row };
-      columns.forEach(col => {
-        if (col.type === 'select' && col.options) {
-          const isBooleanField = col.options.every(opt => 
-            opt.value === 'true' || opt.value === 'false'
-          );
-          if (isBooleanField && typeof formData[col.key] === 'boolean') {
-            formData[col.key] = String(formData[col.key]);
-          }
-        }
-      });
-      setEditing(row);
-      setForm(formData);
-    } else {
-      setEditing({});
-      setForm({});
-    }
+    setEditing(row || {});
+    setForm(row || {});
   };
 
   const cancel = () => {
@@ -115,32 +98,14 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
         return;
       }
 
-      // Convert string booleans to actual booleans
-      const sanitizedForm = { ...form };
-      columns.forEach(col => {
-        if (col.type === 'select' && col.options) {
-          const isBooleanField = col.options.every(opt => 
-            opt.value === 'true' || opt.value === 'false'
-          );
-          if (isBooleanField && typeof sanitizedForm[col.key] === 'string') {
-            sanitizedForm[col.key] = sanitizedForm[col.key] === 'true';
-          }
-        }
-      });
-
       if (editing && editing.id) {
         const { data, error } = await (supabase.from as any)(table)
-          .update(sanitizedForm)
+          .update(form)
           .eq('id', editing.id)
           .select('*')
           .maybeSingle();
         
-        if (error) {
-          console.error('Update error:', error);
-          throw error;
-        }
-        
-        console.log('Update successful:', data);
+        if (error) throw error;
         
         // Reload data to ensure consistency
         await loadData();
@@ -150,16 +115,11 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
         });
       } else {
         const { data, error } = await (supabase.from as any)(table)
-          .insert(sanitizedForm)
+          .insert(form)
           .select('*')
           .maybeSingle();
         
-        if (error) {
-          console.error('Insert error:', error);
-          throw error;
-        }
-        
-        console.log('Insert successful:', data);
+        if (error) throw error;
         
         // Reload data to ensure consistency
         await loadData();
@@ -186,12 +146,7 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
     
     try {
       const { error } = await (supabase.from as any)(table).delete().eq('id', id);
-      if (error) {
-        console.error('Delete error:', error);
-        throw error;
-      }
-      
-      console.log('Delete successful for ID:', id);
+      if (error) throw error;
       
       // Reload data to ensure consistency
       await loadData();
@@ -229,15 +184,9 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
                 <tr key={r.id} className="hover:bg-muted/40">
                   {visibleColumns.map(c => (
                     <td key={c.key} className="p-3 border-b border-border align-top">
-                      {c.type === 'image' && r[c.key] ? (
-                        <img src={r[c.key]} alt="Thumbnail" className="h-12 w-12 object-cover rounded" />
-                      ) : c.type === 'select' && optionsMap[c.key] ? (
-                        optionsMap[c.key].find(o => o.value === String(r[c.key]))?.label || String(r[c.key] ?? '')
-                      ) : c.type === 'textarea' ? (
-                        <div className="max-w-xs truncate">{String(r[c.key] ?? '')}</div>
-                      ) : (
-                        String(r[c.key] ?? '')
-                      )}
+                      {c.type === 'select' && optionsMap[c.key]
+                        ? (optionsMap[c.key].find(o => o.value === r[c.key])?.label || '')
+                        : String(r[c.key] ?? '')}
                     </td>
                   ))}
                   <td className="p-3 border-b border-border text-right whitespace-nowrap">
