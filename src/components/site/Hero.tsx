@@ -2,7 +2,9 @@ import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { about } from "@/data/siteData";
 import Hero3D from "./Hero3D";
+import GradientText from "@/components/ui/GradientText";
 import { gsap } from "gsap";
+
 const Hero = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
@@ -88,9 +90,12 @@ const Hero = () => {
       </div>
       <Hero3D />
       <div className="container py-24 md:py-32">
-        <h1 className="hero-title hero-name text-5xl md:text-7xl lg:text-8xl xl:text-9xl mb-6">
+        <GradientText
+          as="h1"
+          className="hero-title hero-name text-5xl md:text-7xl lg:text-8xl xl:text-9xl mb-6"
+        >
           {about.name}
-        </h1>
+        </GradientText>
         <h2 className="hero-subtitle text-xl md:text-2xl lg:text-3xl font-display font-semibold text-foreground/90 mb-6 leading-relaxed">
           AI Engineer & Generative AI Developer
         </h2>
