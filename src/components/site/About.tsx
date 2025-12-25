@@ -1,8 +1,8 @@
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { topSkills } from "@/data/siteData";
-import ProfileCard from "@/components/ui/ProfileCard";
 import GradientText from "@/components/ui/GradientText";
 import { motion, type Variants } from "framer-motion";
+import maheenProfile from "@/assets/maheen-profile.jpg";
 
 const About = () => {
   const { data: aboutData, loading } = useSupabaseData<any>("about");
@@ -106,22 +106,23 @@ const About = () => {
           </motion.div>
         </motion.div>
 
-        {/* Right Side - Profile Card */}
+        {/* Right Side - Profile Image */}
         <motion.div
           className="order-1 lg:order-2 flex justify-center"
           variants={itemVariants}
         >
-          <ProfileCard
-            name="Maheen Touqeer"
-            title="AI Engineer & Generative AI Developer"
-            location="Pakistan"
-            email="contact@maheentouqeer.com"
-            imageUrl={aboutInfo?.image_url}
-            status="available"
-            ctaLabel="Let's Connect"
-            ctaHref="#contact"
-            className="w-full max-w-sm"
-          />
+          <motion.div
+            className="relative w-full max-w-sm"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-3xl blur-2xl" />
+            <img
+              src={aboutInfo?.image_url || maheenProfile}
+              alt="Maheen Touqeer"
+              className="relative w-full h-auto rounded-3xl object-cover shadow-2xl border border-border/20"
+            />
+          </motion.div>
         </motion.div>
       </motion.div>
     </section>
