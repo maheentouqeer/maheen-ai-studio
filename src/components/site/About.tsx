@@ -1,62 +1,129 @@
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { topSkills } from "@/data/siteData";
-import LazyImage from "@/components/ui/LazyImage";
-import maheen3DAvatar from "@/assets/maheen-3d-avatar.jpg";
-import maheenTouqeer from "@/assets/maheen-touqeer.jpg";
+import ProfileCard from "@/components/ui/ProfileCard";
+import GradientText from "@/components/ui/GradientText";
+import { motion, type Variants } from "framer-motion";
 
 const About = () => {
   const { data: aboutData, loading } = useSupabaseData<any>("about");
   const aboutInfo = aboutData.length > 0 ? aboutData[0] : null;
 
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+    },
+  };
+
+  const skillVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.4, ease: [0.34, 1.56, 0.64, 1] },
+    },
+  };
+
   return (
-    <section id="about" className="container py-16 md:py-24" data-animate="fade-up">
-      <div className="grid lg:grid-cols-2 gap-16 items-center">
-      <div className="order-2 lg:order-1" data-animate="fade-right">
-        <div className="heading-backdrop mb-8" data-animate="heading-reveal">
-          <h2 className="section-heading text-center lg:text-left">
-            {aboutInfo?.heading || "About Me"}
-          </h2>
-        </div>
-          <div className="space-y-4 text-lg leading-relaxed text-muted-foreground/90">
+    <section id="about" className="container py-16 md:py-24 relative">
+      <motion.div
+        className="grid lg:grid-cols-2 gap-16 items-center"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+      >
+        {/* Left Content */}
+        <motion.div className="order-2 lg:order-1" variants={itemVariants}>
+          <motion.div className="mb-8" variants={itemVariants}>
+            <GradientText
+              as="h2"
+              className="text-3xl md:text-4xl lg:text-5xl font-display font-bold"
+            >
+              {aboutInfo?.heading || "About Me"}
+            </GradientText>
+          </motion.div>
+
+          <motion.div
+            className="space-y-4 text-lg leading-relaxed text-muted-foreground/90"
+            variants={itemVariants}
+          >
             <p className="font-medium">
-              {aboutInfo?.content || "Passionate AI engineer building the future with cutting-edge technology and innovative solutions."}
+              {aboutInfo?.content ||
+                "Passionate AI engineer building the future with cutting-edge technology and innovative solutions."}
             </p>
             <p className="text-base">
-              Currently pursuing BS in Artificial Intelligence at DUET, focusing on ethical AI development and real-world applications.
+              Currently pursuing BS in Artificial Intelligence at DUET, focusing
+              on ethical AI development and real-world applications.
             </p>
-          </div>
-          
+          </motion.div>
+
           {/* Credentials highlight */}
-          <div className="mt-8 p-6 rounded-2xl bg-gradient-card border border-primary/20">
-            <h3 className="font-display font-semibold text-primary mb-3">Featured Work</h3>
+          <motion.div
+            className="mt-8 p-6 rounded-2xl bg-gradient-card border border-primary/20 backdrop-blur-sm"
+            variants={itemVariants}
+            whileHover={{ scale: 1.02, borderColor: "hsl(var(--primary) / 0.4)" }}
+            transition={{ duration: 0.3 }}
+          >
+            <h3 className="font-display font-semibold text-primary mb-3">
+              Featured Work
+            </h3>
             <p className="text-sm text-muted-foreground/80">
-              🚀 30 AI Apps in 30 Days Challenge • 🎯 RAG & Agentic AI Specialist • 🎨 Creative AI Solutions
+              🚀 30 AI Apps in 30 Days Challenge • 🎯 RAG & Agentic AI Specialist
+              • 🎨 Creative AI Solutions
             </p>
-          </div>
-          
-          <div className="mt-8 flex flex-wrap gap-3">
-            {topSkills.map(skill => (
-              <span 
-                key={skill} 
-                className="px-4 py-2 rounded-xl bg-secondary/40 text-secondary-foreground text-sm font-medium border border-border/50 hover-scale transition-all hover:bg-secondary/60 hover:border-primary/30"
+          </motion.div>
+
+          {/* Skills Tags */}
+          <motion.div
+            className="mt-8 flex flex-wrap gap-3"
+            variants={containerVariants}
+          >
+            {topSkills.map((skill, index) => (
+              <motion.span
+                key={skill}
+                className="px-4 py-2 rounded-xl bg-secondary/40 text-secondary-foreground text-sm font-medium border border-border/50 hover:bg-secondary/60 hover:border-primary/30 transition-all cursor-default"
+                variants={skillVariants}
+                whileHover={{ scale: 1.05, y: -2 }}
+                custom={index}
               >
                 {skill}
-              </span>
+              </motion.span>
             ))}
-          </div>
-        </div>
-        
-        <div className="order-1 lg:order-2 flex justify-center" data-animate="fade-left">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-20 blur-xl animate-pulse" />
-            <LazyImage 
-              src={maheenTouqeer} 
-              alt="Maheen Touqeer - AI Engineer and Developer working with cutting-edge technology" 
-              className="relative h-48 w-48 md:h-64 md:w-64 lg:h-80 lg:w-80 rounded-2xl shadow-deep hover-scale ring-2 ring-primary/30 transition-all duration-500 object-cover"
-            />
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Right Side - Profile Card */}
+        <motion.div
+          className="order-1 lg:order-2 flex justify-center"
+          variants={itemVariants}
+        >
+          <ProfileCard
+            name="Maheen Touqeer"
+            title="AI Engineer & Generative AI Developer"
+            location="Pakistan"
+            email="contact@maheentouqeer.com"
+            imageUrl={aboutInfo?.image_url}
+            status="available"
+            ctaLabel="Let's Connect"
+            ctaHref="#contact"
+            className="w-full max-w-sm"
+          />
+        </motion.div>
+      </motion.div>
     </section>
   );
 };
