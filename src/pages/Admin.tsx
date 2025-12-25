@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import AdminCrud, { type ColumnDef } from "@/pages/admin/components/AdminCrud";
 import KnowledgeTrainer from "@/pages/admin/components/KnowledgeTrainer";
 import ContactsManager from "@/pages/admin/components/ContactsManager";
@@ -11,96 +10,48 @@ import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import BackgroundCircles from "@/components/ui/BackgroundCircles";
 import GradientText from "@/components/ui/GradientText";
 import { LogOut, Shield, Database, Users, Brain, Mail, Briefcase, GraduationCap, Folder, Link2, Layers } from "lucide-react";
-import type { User, Session } from "@supabase/supabase-js";
 
 const Admin = () => {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
-      
-      if (!newSession) {
-        navigate('/auth');
-      }
-    });
+    // Check for valid admin token
+    const adminToken = localStorage.getItem('adminToken');
+    const adminTokenExpiry = localStorage.getItem('adminTokenExpiry');
+    
+    if (!adminToken || !adminTokenExpiry) {
+      navigate('/auth');
+      return;
+    }
 
-    // THEN check for existing session and admin role
-    const checkAuth = async () => {
-      try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        
-        if (!currentSession) {
-          navigate('/auth');
-          return;
-        }
-
-        setSession(currentSession);
-        setUser(currentSession.user);
-
-        // Check admin role
-        const { data: hasRole, error: roleError } = await supabase.rpc('has_role', {
-          _user_id: currentSession.user.id,
-          _role: 'admin'
-        });
-
-        if (roleError) {
-          console.error('Error checking role:', roleError);
-          toast({
-            title: "Access Error",
-            description: "Failed to verify admin access.",
-            variant: "destructive",
-          });
-          navigate('/');
-          return;
-        }
-
-        if (!hasRole) {
-          toast({
-            title: "Access Denied",
-            description: "You need admin privileges to access this page.",
-            variant: "destructive",
-          });
-          navigate('/');
-          return;
-        }
-
-        setIsAdmin(true);
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        navigate('/auth');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
+    const expiryDate = new Date(adminTokenExpiry);
+    if (expiryDate <= new Date()) {
+      // Token expired
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminTokenExpiry');
       toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
-      });
-      navigate('/');
-    } catch (error) {
-      console.error('Logout error:', error);
-      toast({
-        title: "Logout failed",
-        description: "An error occurred while logging out.",
+        title: "Session Expired",
+        description: "Please enter the passcode again.",
         variant: "destructive",
       });
+      navigate('/auth');
+      return;
     }
+
+    setIsAuthenticated(true);
+    setLoading(false);
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminTokenExpiry');
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+    navigate('/');
   };
 
   if (loading) {
@@ -115,7 +66,7 @@ const Admin = () => {
     );
   }
 
-  if (!isAdmin) {
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -185,7 +136,7 @@ const Admin = () => {
               <h1 className="text-xl font-bold">
                 <GradientText>Admin Dashboard</GradientText>
               </h1>
-              <p className="text-xs text-muted-foreground">{user?.email}</p>
+              <p className="text-xs text-muted-foreground">Passcode Protected</p>
             </div>
           </div>
           <Button 
