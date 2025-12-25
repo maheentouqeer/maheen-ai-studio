@@ -8,49 +8,50 @@ import AdminCrud, { type ColumnDef } from "@/pages/admin/components/AdminCrud";
 import KnowledgeTrainer from "@/pages/admin/components/KnowledgeTrainer";
 import ContactsManager from "@/pages/admin/components/ContactsManager";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
-import { LogOut, Shield, Database, Users, Brain, Mail } from "lucide-react";
+import BackgroundCircles from "@/components/ui/BackgroundCircles";
+import GradientText from "@/components/ui/GradientText";
+import { LogOut, Shield, Database, Users, Brain, Mail, Briefcase, GraduationCap, Folder, Link2, Layers } from "lucide-react";
+import type { User, Session } from "@supabase/supabase-js";
 
 const Admin = () => {
   const [loading, setLoading] = useState(true);
-  const [allowed, setAllowed] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
+      setSession(newSession);
+      setUser(newSession?.user ?? null);
+      
+      if (!newSession) {
+        navigate('/auth');
+      }
+    });
+
+    // THEN check for existing session and admin role
     const checkAuth = async () => {
       try {
-        // First check for passcode-based admin session
-        const adminToken = localStorage.getItem('adminToken');
-        const adminTokenExpiry = localStorage.getItem('adminTokenExpiry');
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
         
-        if (adminToken && adminTokenExpiry) {
-          const expiryDate = new Date(adminTokenExpiry);
-          if (expiryDate > new Date()) {
-            setAllowed(true);
-            setLoading(false);
-            return;
-          } else {
-            // Token expired, clear it
-            localStorage.removeItem('adminToken');
-            localStorage.removeItem('adminTokenExpiry');
-          }
-        }
-
-        // Fallback to email/password authentication
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
+        if (!currentSession) {
           navigate('/auth');
           return;
         }
 
-        // Check if user has admin role
-        const { data: hasRole, error } = await supabase.rpc('has_role', {
-          _user_id: session.user.id,
+        setSession(currentSession);
+        setUser(currentSession.user);
+
+        // Check admin role
+        const { data: hasRole, error: roleError } = await supabase.rpc('has_role', {
+          _user_id: currentSession.user.id,
           _role: 'admin'
         });
 
-        if (error) {
-          console.error('Error checking role:', error);
+        if (roleError) {
+          console.error('Error checking role:', roleError);
           toast({
             title: "Access Error",
             description: "Failed to verify admin access.",
@@ -70,7 +71,7 @@ const Admin = () => {
           return;
         }
 
-        setAllowed(true);
+        setIsAdmin(true);
       } catch (error) {
         console.error('Auth check failed:', error);
         navigate('/auth');
@@ -81,47 +82,44 @@ const Admin = () => {
 
     checkAuth();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        navigate('/auth');
-      }
-    });
-
     return () => subscription.unsubscribe();
   }, [navigate]);
 
   const handleLogout = async () => {
-    // Clear passcode session
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminTokenExpiry');
-    
-    // Also sign out from Supabase auth if logged in
-    await supabase.auth.signOut();
-    
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    });
-    navigate('/');
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast({
+        title: "Logout failed",
+        description: "An error occurred while logging out.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-primary">
-        <div className="text-center">
+      <div className="min-h-screen flex items-center justify-center relative">
+        <BackgroundCircles variant="subtle" />
+        <div className="text-center relative z-10">
           <Shield className="h-12 w-12 mx-auto mb-4 text-primary animate-pulse" />
-          <p className="text-lg text-muted-foreground">Checking access...</p>
+          <p className="text-lg text-muted-foreground">Verifying admin access...</p>
         </div>
       </div>
     );
   }
 
-  if (!allowed) {
+  if (!isAdmin) {
     return null;
   }
 
-  // Column definitions for each table
+  // Column definitions
   const aboutColumns: ColumnDef[] = [
     { key: 'heading', label: 'Heading', type: 'text', required: true },
     { key: 'content', label: 'Content', type: 'textarea' },
@@ -160,7 +158,7 @@ const Admin = () => {
     { key: 'category_id', label: 'Category', type: 'select', optionsSource: { table: 'categories', value: 'id', label: 'name' } },
     { key: 'media_url', label: 'Project Image', type: 'image' },
     { key: 'link_url', label: 'Link URL', type: 'text' },
-    { key: 'published', label: 'Published', type: 'select', options: [{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }] },
+    { key: 'published', label: 'Published', type: 'boolean' },
   ];
 
   const hireLinksColumns: ColumnDef[] = [
@@ -170,21 +168,30 @@ const Admin = () => {
     { key: 'rate', label: 'Rate', type: 'text' },
     { key: 'rating', label: 'Rating', type: 'text' },
     { key: 'projects', label: 'Projects Count', type: 'text' },
-    { key: 'available', label: 'Available', type: 'select', options: [{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }] },
+    { key: 'available', label: 'Available', type: 'boolean' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-primary">
-      <header className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
+    <div className="min-h-screen relative">
+      <BackgroundCircles variant="subtle" />
+      
+      <header className="bg-card/80 backdrop-blur-xl border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Shield className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold title-gradient">Admin Dashboard</h1>
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Shield className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold">
+                <GradientText>Admin Dashboard</GradientText>
+              </h1>
+              <p className="text-xs text-muted-foreground">{user?.email}</p>
+            </div>
           </div>
           <Button 
             onClick={handleLogout} 
             variant="outline" 
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 glass-panel"
           >
             <LogOut className="h-4 w-4" />
             Logout
@@ -192,33 +199,51 @@ const Admin = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 relative z-10">
         <Tabs defaultValue="about" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9 glass-panel">
-            <TabsTrigger value="about" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-1 glass-panel p-1 h-auto">
+            <TabsTrigger value="about" className="flex items-center gap-2 text-xs md:text-sm">
               <Users className="h-4 w-4" />
-              About
+              <span className="hidden sm:inline">About</span>
             </TabsTrigger>
-            <TabsTrigger value="skills">Skills</TabsTrigger>
-            <TabsTrigger value="education">Education</TabsTrigger>
-            <TabsTrigger value="experience">Experience</TabsTrigger>
-            <TabsTrigger value="categories">Categories</TabsTrigger>
-            <TabsTrigger value="projects">Projects</TabsTrigger>
-            <TabsTrigger value="hirelinks">Hire Links</TabsTrigger>
-            <TabsTrigger value="knowledge" className="flex items-center gap-2">
+            <TabsTrigger value="skills" className="flex items-center gap-2 text-xs md:text-sm">
+              <Layers className="h-4 w-4" />
+              <span className="hidden sm:inline">Skills</span>
+            </TabsTrigger>
+            <TabsTrigger value="education" className="flex items-center gap-2 text-xs md:text-sm">
+              <GraduationCap className="h-4 w-4" />
+              <span className="hidden sm:inline">Education</span>
+            </TabsTrigger>
+            <TabsTrigger value="experience" className="flex items-center gap-2 text-xs md:text-sm">
+              <Briefcase className="h-4 w-4" />
+              <span className="hidden sm:inline">Experience</span>
+            </TabsTrigger>
+            <TabsTrigger value="categories" className="flex items-center gap-2 text-xs md:text-sm">
+              <Folder className="h-4 w-4" />
+              <span className="hidden sm:inline">Categories</span>
+            </TabsTrigger>
+            <TabsTrigger value="projects" className="flex items-center gap-2 text-xs md:text-sm">
+              <Database className="h-4 w-4" />
+              <span className="hidden sm:inline">Projects</span>
+            </TabsTrigger>
+            <TabsTrigger value="hirelinks" className="flex items-center gap-2 text-xs md:text-sm">
+              <Link2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Links</span>
+            </TabsTrigger>
+            <TabsTrigger value="knowledge" className="flex items-center gap-2 text-xs md:text-sm">
               <Brain className="h-4 w-4" />
-              AI Knowledge
+              <span className="hidden sm:inline">AI</span>
             </TabsTrigger>
-            <TabsTrigger value="contacts" className="flex items-center gap-2">
+            <TabsTrigger value="contacts" className="flex items-center gap-2 text-xs md:text-sm">
               <Mail className="h-4 w-4" />
-              Contacts
+              <span className="hidden sm:inline">Contacts</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="about" className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
-              <Database className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold">About Section Management</h2>
+              <Users className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">About Section</h2>
             </div>
             <ErrorBoundary>
               <AdminCrud table="about" columns={aboutColumns} />
@@ -227,7 +252,7 @@ const Admin = () => {
 
           <TabsContent value="skills" className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
-              <Database className="h-5 w-5 text-primary" />
+              <Layers className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">Skills Management</h2>
             </div>
             <ErrorBoundary>
@@ -237,8 +262,8 @@ const Admin = () => {
 
           <TabsContent value="education" className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
-              <Database className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold">Education Management</h2>
+              <GraduationCap className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Education</h2>
             </div>
             <ErrorBoundary>
               <AdminCrud table="education" columns={educationColumns} />
@@ -247,8 +272,8 @@ const Admin = () => {
 
           <TabsContent value="experience" className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
-              <Database className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold">Experience Management</h2>
+              <Briefcase className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Experience</h2>
             </div>
             <ErrorBoundary>
               <AdminCrud table="experience" columns={experienceColumns} />
@@ -257,8 +282,8 @@ const Admin = () => {
 
           <TabsContent value="categories" className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
-              <Database className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold">Categories Management</h2>
+              <Folder className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Categories</h2>
             </div>
             <ErrorBoundary>
               <AdminCrud table="categories" columns={categoriesColumns} />
@@ -268,7 +293,7 @@ const Admin = () => {
           <TabsContent value="projects" className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
               <Database className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold">Projects Management</h2>
+              <h2 className="text-xl font-semibold">Projects</h2>
             </div>
             <ErrorBoundary>
               <AdminCrud table="projects" columns={projectsColumns} />
@@ -277,8 +302,8 @@ const Admin = () => {
 
           <TabsContent value="hirelinks" className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
-              <Database className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold">Hire Links Management</h2>
+              <Link2 className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Hire Links</h2>
             </div>
             <ErrorBoundary>
               <AdminCrud table="hire_links" columns={hireLinksColumns} />
@@ -288,7 +313,7 @@ const Admin = () => {
           <TabsContent value="knowledge" className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
               <Brain className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold">AI Assistant Knowledge</h2>
+              <h2 className="text-xl font-semibold">AI Knowledge</h2>
             </div>
             <ErrorBoundary>
               <KnowledgeTrainer />

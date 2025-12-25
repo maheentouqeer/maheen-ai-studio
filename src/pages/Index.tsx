@@ -1,8 +1,7 @@
-import NavBar from "@/components/site/NavBar";
+import LimelightNav from "@/components/ui/LimelightNav";
 import Hero from "@/components/site/Hero";
 import About from "@/components/site/About";
 import Skills from "@/components/site/Skills";
-import Timeline from "@/components/site/Timeline";
 import Education from "@/components/site/Education";
 import Experience from "@/components/site/Experience";
 import Projects from "@/components/site/Projects";
@@ -10,24 +9,25 @@ import HireLinks from "@/components/site/HireLinks";
 import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
 import VoiceAssistant from "@/components/site/VoiceAssistant";
-import { useSupabaseData } from "@/hooks/useSupabaseData";
-import { education } from "@/data/siteData";
+import BackgroundCircles from "@/components/ui/BackgroundCircles";
 import useScrollReveal from "@/hooks/useScrollReveal";
+
+const navItems = [
+  { id: "home", label: "Home", href: "#home" },
+  { id: "about", label: "About", href: "#about" },
+  { id: "skills", label: "Skills", href: "#skills" },
+  { id: "education", label: "Education", href: "#education" },
+  { id: "projects", label: "Projects", href: "#projects" },
+  { id: "contact", label: "Contact", href: "#contact" },
+];
 
 const Index = () => {
   useScrollReveal();
-  const { data: educationData } = useSupabaseData<any>("education");
-  const displayEducation = educationData.length > 0 
-    ? educationData.map((e: any) => ({
-        school: e.institution,
-        detail: e.degree || "Studies",
-        period: `${e.start_date || ''} - ${e.end_date || 'Present'}`
-      }))
-    : education;
 
   return (
-    <div>
-      <NavBar />
+    <div className="relative">
+      <BackgroundCircles variant="hero" />
+      <LimelightNav items={navItems} />
       <main>
         <Hero />
         <About />
