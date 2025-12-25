@@ -6,7 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Shield } from "lucide-react";
+import BackgroundCircles from "@/components/ui/BackgroundCircles";
+import GradientText from "@/components/ui/GradientText";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -17,14 +19,17 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is already logged in
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        navigate('/admin');
+        // Defer navigation to avoid deadlock
+        setTimeout(() => {
+          navigate('/admin');
+        }, 0);
       }
     });
 
-    // Check initial session
+    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate('/admin');
@@ -36,16 +41,60 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Missing fields",
+        description: "Please enter both email and password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 6 characters.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         
-        if (error) throw error;
+        if (error) {
+          if (error.message.includes("Invalid login credentials")) {
+            throw new Error("Invalid email or password. Please check your credentials.");
+          }
+          throw error;
+        }
+
+        // Check if user has admin role
+        const { data: hasRole, error: roleError } = await supabase.rpc('has_role', {
+          _user_id: data.user.id,
+          _role: 'admin'
+        });
+
+        if (roleError) {
+          console.error("Role check error:", roleError);
+        }
+
+        if (!hasRole) {
+          await supabase.auth.signOut();
+          toast({
+            title: "Access Denied",
+            description: "You don't have admin privileges. Contact the administrator.",
+            variant: "destructive",
+          });
+          return;
+        }
         
         toast({
           title: "Welcome back!",
@@ -60,17 +109,23 @@ const Auth = () => {
           }
         });
         
-        if (error) throw error;
+        if (error) {
+          if (error.message.includes("already registered")) {
+            throw new Error("This email is already registered. Please sign in instead.");
+          }
+          throw error;
+        }
         
         toast({
           title: "Account created!",
-          description: "Please check your email to confirm your account.",
+          description: "Please check your email to confirm your account. Admin access requires approval.",
         });
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast({
         title: "Authentication failed",
-        description: error.message,
+        description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
     } finally {
@@ -79,15 +134,22 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-primary px-4">
-      <Card className="w-full max-w-md glass-panel">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      <BackgroundCircles variant="hero" />
+      
+      <Card className="w-full max-w-md glass-panel relative z-10">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold title-gradient">
-            {isLogin ? "Welcome Back" : "Create Account"}
+          <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <Shield className="h-8 w-8 text-primary" />
+          </div>
+          <CardTitle className="text-2xl font-bold">
+            <GradientText as="span">
+              {isLogin ? "Welcome Back" : "Create Account"}
+            </GradientText>
           </CardTitle>
           <CardDescription>
             {isLogin 
-              ? "Sign in to access the admin dashboard" 
+              ? "Sign in with your admin credentials" 
               : "Sign up for admin access (requires approval)"
             }
           </CardDescription>
@@ -104,6 +166,7 @@ const Auth = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="glass-input"
+                autoComplete="email"
               />
             </div>
             
@@ -118,6 +181,7 @@ const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="glass-input pr-10"
+                  autoComplete={isLogin ? "current-password" : "new-password"}
                 />
                 <Button
                   type="button"
@@ -125,11 +189,12 @@ const Auth = () => {
                   size="sm"
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    <Eye className="h-4 w-4 text-muted-foreground" />
                   )}
                 </Button>
               </div>
@@ -137,7 +202,7 @@ const Auth = () => {
 
             <Button
               type="submit"
-              className="w-full btn-gradient"
+              className="w-full btn-premium"
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -158,10 +223,19 @@ const Auth = () => {
             </Button>
           </div>
 
-          <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+          <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50">
             <p className="text-xs text-muted-foreground text-center">
-              Admin access requires email approval. Contact the administrator for access.
+              Admin access requires email verification and role assignment by an existing administrator.
             </p>
+          </div>
+
+          <div className="mt-4 text-center">
+            <a
+              href="/"
+              className="text-sm text-primary hover:text-primary/80 transition-colors story-link"
+            >
+              ← Back to Portfolio
+            </a>
           </div>
         </CardContent>
       </Card>
