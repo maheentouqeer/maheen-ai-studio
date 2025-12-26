@@ -1,41 +1,31 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
-import { HCAPTCHA_SITEKEY } from "@/config";
 
 const Contact = () => {
   const [loading, setLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const captchaRef = useRef<HCaptcha | null>(null);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;
+    const data = new FormData(formElement);
     const name = String(data.get('name') || '');
     const email = String(data.get('email') || '');
     const message = String(data.get('message') || '');
 
-    if (!captchaToken) {
-      toast({ title: 'Please complete CAPTCHA', description: 'Confirm you are human to submit.' });
-      return;
-    }
-
     setLoading(true);
     try {
       const { data: resp, error } = await supabase.functions.invoke('contact-submit', {
-        body: { name, email, message, captchaToken }
+        body: { name, email, message }
       });
       if (error) throw error;
-      if (!resp?.ok) throw new Error(resp?.error || 'Submission failed');
+      if (!resp?.success) throw new Error(resp?.error || 'Submission failed');
 
       toast({ title: 'Message received!', description: 'Thanks for reaching out — I will respond shortly.' });
-      e.currentTarget.reset();
-      setCaptchaToken(null);
-      captchaRef.current?.resetCaptcha();
+      formElement.reset();
     } catch (err: any) {
       toast({ title: 'Something went wrong', description: String(err?.message || err) });
     } finally {
@@ -60,15 +50,7 @@ const Contact = () => {
           <Input type="email" name="email" placeholder="Your email" required aria-label="Your email" className="glass-input" />
           <Textarea name="message" placeholder="Your message" required className="md:col-span-2 glass-input" aria-label="Your message" />
           <div className="md:col-span-2">
-            <HCaptcha
-              ref={captchaRef as any}
-              sitekey={HCAPTCHA_SITEKEY}
-              onVerify={(token) => setCaptchaToken(token)}
-              theme="dark"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <Button type="submit" disabled={loading || !captchaToken} className="btn-premium hover-scale w-full">
+            <Button type="submit" disabled={loading} className="btn-premium hover-scale w-full">
               {loading ? 'Sending...' : 'Send Message'}
             </Button>
           </div>

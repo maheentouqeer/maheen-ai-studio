@@ -112,7 +112,7 @@ export default function RadialOrbitalTimeline({
 
   const calculateNodePosition = (index: number, total: number) => {
     const angle = ((index / total) * 360 + rotationAngle) % 360;
-    const radius = 200;
+    const radius = 280;
     const radian = (angle * Math.PI) / 180;
 
     const x = radius * Math.cos(radian) + centerOffset.x;
@@ -120,8 +120,8 @@ export default function RadialOrbitalTimeline({
 
     const zIndex = Math.round(100 + 50 * Math.cos(radian));
     const opacity = Math.max(
-      0.4,
-      Math.min(1, 0.4 + 0.6 * ((1 + Math.sin(radian)) / 2))
+      0.6,
+      Math.min(1, 0.6 + 0.4 * ((1 + Math.sin(radian)) / 2))
     );
 
     return { x, y, angle, zIndex, opacity };
@@ -154,20 +154,21 @@ export default function RadialOrbitalTimeline({
   return (
     <div
       ref={containerRef}
-      className="relative flex min-h-[600px] w-full items-center justify-center overflow-hidden p-4"
+      className="relative flex min-h-[700px] w-full items-center justify-center overflow-hidden p-8"
       onClick={handleContainerClick}
     >
-      <div className="relative flex h-[500px] w-[500px] items-center justify-center">
+      <div className="relative flex h-[650px] w-[650px] items-center justify-center">
         <div
           ref={orbitRef}
-          className="absolute h-[400px] w-[400px] rounded-full border border-border/30"
+          className="absolute h-[560px] w-[560px] rounded-full border-2 border-primary/40"
+          style={{ boxShadow: '0 0 60px rgba(var(--primary-rgb), 0.2), inset 0 0 40px rgba(var(--primary-rgb), 0.1)' }}
         >
-          <div className="absolute inset-0 rounded-full border border-border/20" />
-          <div className="absolute inset-4 rounded-full border border-border/10" />
-          <div className="absolute inset-8 rounded-full border border-border/5" />
+          <div className="absolute inset-0 rounded-full border border-primary/30 animate-pulse" />
+          <div className="absolute inset-6 rounded-full border border-primary/20" />
+          <div className="absolute inset-12 rounded-full border border-primary/10" />
         </div>
 
-        <div className="absolute h-4 w-4 rounded-full bg-primary shadow-lg shadow-primary/50" />
+        <div className="absolute h-6 w-6 rounded-full bg-gradient-to-br from-primary to-primary/70 shadow-lg shadow-primary/60 animate-pulse" />
 
         {timelineData.map((item, index) => {
           const position = calculateNodePosition(index, timelineData.length);
@@ -194,19 +195,20 @@ export default function RadialOrbitalTimeline({
               }}
             >
               <div
-                className={`relative flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all duration-300 ${getStatusStyles(
+                className={`relative flex h-16 w-16 items-center justify-center rounded-full border-2 transition-all duration-500 ease-out ${getStatusStyles(
                   item.status
                 )} ${isRelated ? "scale-125" : ""} ${
                   isPulsing ? "animate-pulse" : ""
                 }`}
+                style={{ boxShadow: '0 0 25px rgba(var(--primary-rgb), 0.4)' }}
               >
                 {isPulsing && (
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-50" />
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
                 )}
-                <Icon className="h-5 w-5" />
+                <Icon className="h-7 w-7" />
               </div>
 
-              <div className="absolute left-1/2 top-14 -translate-x-1/2 whitespace-nowrap text-xs font-medium text-muted-foreground">
+              <div className="absolute left-1/2 top-[4.5rem] -translate-x-1/2 whitespace-nowrap text-sm font-semibold text-foreground/90">
                 {item.title}
               </div>
 
