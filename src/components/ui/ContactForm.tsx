@@ -3,10 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Send, Shield } from "lucide-react";
+import { Mail, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +14,6 @@ const ContactForm = () => {
     message: ""
   });
   const [loading, setLoading] = useState(false);
-  const [hcaptchaToken, setHcaptchaToken] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -37,22 +35,10 @@ const ContactForm = () => {
       return;
     }
 
-    if (!hcaptchaToken) {
-      toast({
-        title: "Verification Required",
-        description: "Please complete the captcha verification",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('contact-submit', {
-        body: {
-          ...formData,
-          hcaptchaToken
-        }
+        body: formData
       });
 
       if (error) {
@@ -61,13 +47,11 @@ const ContactForm = () => {
 
       if (data.success) {
         toast({
-          title: "Message Sent! 🚀",
+          title: "Message Sent!",
           description: "Thank you for reaching out. I'll get back to you soon!",
         });
         
-        // Reset form
         setFormData({ name: "", email: "", message: "" });
-        setHcaptchaToken(null);
       } else {
         throw new Error(data.error || 'Failed to send message');
       }
@@ -134,20 +118,11 @@ const ContactForm = () => {
               required
             />
           </div>
-
-          <div className="flex justify-center">
-            <HCaptcha
-              sitekey="10000000-ffff-ffff-ffff-000000000001" // Test key - replace with real key
-              onVerify={(token) => setHcaptchaToken(token)}
-              onExpire={() => setHcaptchaToken(null)}
-              onError={() => setHcaptchaToken(null)}
-            />
-          </div>
           
           <Button
             type="submit"
             className="w-full btn-premium hover-scale text-base py-3"
-            disabled={loading || !hcaptchaToken}
+            disabled={loading}
           >
             {loading ? (
               <>
@@ -161,11 +136,6 @@ const ContactForm = () => {
               </>
             )}
           </Button>
-          
-          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-            <Shield className="h-3 w-3" />
-            Protected by hCaptcha • Your data is secure
-          </div>
         </form>
       </CardContent>
     </Card>
