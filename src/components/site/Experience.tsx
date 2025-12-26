@@ -27,7 +27,7 @@ const Experience = () => {
     icon: index === 0 ? Briefcase : index === 1 ? Code : index === 2 ? FileText : index === 3 ? User : Clock,
     relatedIds: index < experience.length - 1 ? [index + 2] : [],
     status: exp.end_date ? "completed" as const : "in-progress" as const,
-    energy: Math.max(20, 100 - index * 20),
+    energy: 100,
   }));
 
   if (loading) {
