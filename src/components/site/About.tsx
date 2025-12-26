@@ -1,12 +1,25 @@
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { topSkills } from "@/data/siteData";
 import GradientText from "@/components/ui/GradientText";
-import { motion, type Variants } from "framer-motion";
+import { motion, type Variants, useScroll, useTransform } from "framer-motion";
 import maheenProfile from "@/assets/maheen-profile.jpg";
+import { useRef } from "react";
 
 const About = () => {
   const { data: aboutData, loading } = useSupabaseData<any>("about");
   const aboutInfo = aboutData.length > 0 ? aboutData[0] : null;
+  const sectionRef = useRef<HTMLElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+
+  // Scroll-based animation for the image
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const imageY = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 0.95]);
+  const imageRotate = useTransform(scrollYProgress, [0, 1], [5, -5]);
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -38,7 +51,7 @@ const About = () => {
   };
 
   return (
-    <section id="about" className="container py-16 md:py-24 relative">
+    <section id="about" ref={sectionRef} className="container py-16 md:py-24 relative">
       <motion.div
         className="grid lg:grid-cols-2 gap-16 items-center"
         variants={containerVariants}
@@ -106,21 +119,27 @@ const About = () => {
           </motion.div>
         </motion.div>
 
-        {/* Right Side - Profile Image */}
+        {/* Right Side - Profile Image with Scroll Animation */}
         <motion.div
           className="order-1 lg:order-2 flex justify-center"
           variants={itemVariants}
         >
           <motion.div
+            ref={imageRef}
             className="relative w-full max-w-sm"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.3 }}
+            style={{
+              y: imageY,
+              scale: imageScale,
+              rotateZ: imageRotate,
+            }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-3xl blur-2xl" />
-            <img
+            <motion.img
               src={aboutInfo?.image_url || maheenProfile}
               alt="Maheen Touqeer"
               className="relative w-full h-auto rounded-3xl object-cover shadow-2xl border border-border/20"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
             />
           </motion.div>
         </motion.div>

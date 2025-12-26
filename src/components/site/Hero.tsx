@@ -100,7 +100,7 @@ const Hero = () => {
           AI Engineer & Generative AI Developer
         </h2>
         <p className="hero-description max-w-xl text-base md:text-lg text-muted-foreground/90 leading-relaxed font-medium">
-          Building the future with ethical AI • 30 AI apps in 30 days challenge • BS AI Student at DUET
+          Building the future with AI & Automation • Passionate about AI Agents & Ethical Innovation
         </p>
         
         {/* 3D Avatar */}

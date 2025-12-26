@@ -23,7 +23,7 @@ export const skills = [
   'Python', 'Streamlit', 'Hugging Face', 'LangChain', 'CrewAI', 'Gradio', 'Java', 'C/C++', 'HTML', 'Google Colab', 'Canva', 'MS Office'
 ];
 
-export const topSkills = ['Object-Oriented Programming (OOP)', 'Java', 'Microsoft Excel'];
+export const topSkills = ['Python', 'Streamlit', 'LangChain', 'CrewAI', 'Hugging Face'];
 
 export const education = [
   {

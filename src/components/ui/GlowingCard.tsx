@@ -1,17 +1,22 @@
+"use client";
+
 import { ReactNode, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { GlowingEffect } from "./glowing-effect";
 
 interface GlowingCardProps {
   children: ReactNode;
   className?: string;
   glowColor?: string;
+  useNewEffect?: boolean;
 }
 
 const GlowingCard = ({
   children,
   className,
-  glowColor = "hsl(214, 92%, 55%)",
+  glowColor = "hsl(var(--primary))",
+  useNewEffect = true,
 }: GlowingCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -25,6 +30,26 @@ const GlowingCard = ({
       y: e.clientY - rect.top,
     });
   };
+
+  if (useNewEffect) {
+    return (
+      <motion.div
+        className={cn("relative rounded-xl", className)}
+        whileHover={{ scale: 1.02, y: -4 }}
+        transition={{ duration: 0.2 }}
+      >
+        <GlowingEffect
+          spread={40}
+          glow={true}
+          disabled={false}
+          proximity={64}
+          inactiveZone={0.01}
+          borderWidth={2}
+        />
+        <div className="relative z-10 h-full">{children}</div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
