@@ -5,47 +5,58 @@ import { motion, type Variants } from "framer-motion";
 import maheenProfile from "@/assets/maheen-profile.jpg";
 import { useRef } from "react";
 import TiltedCard from "@/components/ui/TiltedCard";
-
 const About = () => {
-  const { data: aboutData, loading } = useSupabaseData<any>("about");
+  const {
+    data: aboutData,
+    loading
+  } = useSupabaseData<any>("about");
   const aboutInfo = aboutData.length > 0 ? aboutData[0] : null;
   const sectionRef = useRef<HTMLElement>(null);
-
   const containerVariants: Variants = {
-    hidden: { opacity: 0 },
+    hidden: {
+      opacity: 0
+    },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-    },
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.2
+      }
+    }
   };
-
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: {
+      opacity: 0,
+      y: 30
+    },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
-    },
+      transition: {
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    }
   };
-
   const skillVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.8 },
+    hidden: {
+      opacity: 0,
+      scale: 0.8
+    },
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.4, ease: [0.34, 1.56, 0.64, 1] },
-    },
+      transition: {
+        duration: 0.4,
+        ease: [0.34, 1.56, 0.64, 1]
+      }
+    }
   };
-
-  return (
-    <section id="about" ref={sectionRef} className="container py-16 md:py-24 relative">
-      <motion.div
-        className="grid lg:grid-cols-2 gap-16 items-center"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-      >
+  return <section id="about" ref={sectionRef} className="container py-16 md:py-24 relative">
+      <motion.div className="grid lg:grid-cols-2 gap-16 items-center" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{
+      once: true,
+      margin: "-100px"
+    }}>
         {/* Left Content */}
         <motion.div className="order-2 lg:order-1" variants={itemVariants}>
           <motion.div className="mb-8" variants={itemVariants}>
@@ -64,12 +75,12 @@ const About = () => {
           </motion.div>
 
           {/* Credentials highlight */}
-          <motion.div
-            className="mt-8 p-6 rounded-2xl bg-gradient-card border border-primary/20 backdrop-blur-sm"
-            variants={itemVariants}
-            whileHover={{ scale: 1.02, borderColor: "hsl(var(--primary) / 0.4)" }}
-            transition={{ duration: 0.3 }}
-          >
+          <motion.div className="mt-8 p-6 rounded-2xl bg-gradient-card border border-primary/20 backdrop-blur-sm" variants={itemVariants} whileHover={{
+          scale: 1.02,
+          borderColor: "hsl(var(--primary) / 0.4)"
+        }} transition={{
+          duration: 0.3
+        }}>
             <h3 className="font-display font-semibold text-primary mb-3">Featured Work</h3>
             <p className="text-sm text-muted-foreground/80">
               🚀 30 AI Apps in 30 Days Challenge • 🎯 RAG & Agentic AI Specialist • 🎨 Creative AI Solutions
@@ -77,38 +88,14 @@ const About = () => {
           </motion.div>
 
           {/* Skills Tags */}
-          <motion.div className="mt-8 flex flex-wrap gap-3" variants={containerVariants}>
-            {topSkills.map((skill, index) => (
-              <motion.span
-                key={skill}
-                className="px-4 py-2 rounded-full bg-secondary/50 text-foreground/90 text-sm font-medium border border-border/30 hover:border-primary/40 transition-colors"
-                variants={skillVariants}
-              >
-                {skill}
-              </motion.span>
-            ))}
-          </motion.div>
+          
         </motion.div>
 
         {/* Right Side - Profile Image with Tilted Card Animation */}
         <motion.div className="order-1 lg:order-2 flex justify-center" variants={itemVariants}>
-          <TiltedCard
-            imageSrc={aboutInfo?.image_url || maheenProfile}
-            altText="Maheen Touqeer"
-            captionText="AI Engineer & Developer"
-            containerHeight="400px"
-            containerWidth="350px"
-            imageHeight="400px"
-            imageWidth="350px"
-            scaleOnHover={1.08}
-            rotateAmplitude={12}
-            showMobileWarning={true}
-            showTooltip={true}
-          />
+          <TiltedCard imageSrc={aboutInfo?.image_url || maheenProfile} altText="Maheen Touqeer" captionText="AI Engineer & Developer" containerHeight="400px" containerWidth="350px" imageHeight="400px" imageWidth="350px" scaleOnHover={1.08} rotateAmplitude={12} showMobileWarning={true} showTooltip={true} />
         </motion.div>
       </motion.div>
-    </section>
-  );
+    </section>;
 };
-
 export default About;
