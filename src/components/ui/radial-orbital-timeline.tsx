@@ -81,22 +81,27 @@ export default function RadialOrbitalTimeline({
     });
   };
 
+  // Smooth continuous rotation using requestAnimationFrame
   useEffect(() => {
-    let rotationTimer: NodeJS.Timeout;
+    let animationFrameId: number;
+    let lastTime = performance.now();
 
-    if (autoRotate) {
-      rotationTimer = setInterval(() => {
-        setRotationAngle((prev) => {
-          const newAngle = (prev + 0.3) % 360;
-          return Number(newAngle.toFixed(3));
-        });
-      }, 50);
-    }
+    const animate = (currentTime: number) => {
+      if (autoRotate) {
+        const deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+        
+        // Smooth continuous rotation - 0.02 degrees per millisecond
+        const rotationSpeed = 0.02;
+        setRotationAngle((prev) => (prev + rotationSpeed * deltaTime) % 360);
+      }
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
 
     return () => {
-      if (rotationTimer) {
-        clearInterval(rotationTimer);
-      }
+      cancelAnimationFrame(animationFrameId);
     };
   }, [autoRotate]);
 
@@ -187,8 +192,11 @@ export default function RadialOrbitalTimeline({
             <div
               key={item.id}
               ref={(el) => (nodeRefs.current[item.id] = el)}
-              className="absolute transition-all duration-700 cursor-pointer"
-              style={nodeStyle}
+              className="absolute cursor-pointer"
+              style={{
+                ...nodeStyle,
+                transition: isExpanded ? 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 toggleItem(item.id);
