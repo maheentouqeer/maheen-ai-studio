@@ -11,6 +11,7 @@ import HireLinks from "@/components/site/HireLinks";
 import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
 import BackgroundCircles from "@/components/ui/BackgroundCircles";
+import SplashCursor from "@/components/ui/SplashCursor";
 import useScrollReveal from "@/hooks/useScrollReveal";
 
 const navItems = [
@@ -28,10 +29,10 @@ const Index = () => {
 
   return (
     <div className="relative">
+      <SplashCursor />
       <BackgroundCircles variant="hero" />
       <LimelightNav items={navItems} />
       
-      {/* Admin Link - Fixed position */}
       <Link
         to="/admin"
         className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-primary/10 backdrop-blur-md border border-primary/20 text-primary hover:bg-primary/20 hover:scale-110 transition-all duration-300 shadow-lg group"
