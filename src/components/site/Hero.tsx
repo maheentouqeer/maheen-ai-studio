@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { about } from "@/data/siteData";
 import Hero3D from "./Hero3D";
+import GradientText from "@/components/ui/GradientText";
 import { gsap } from "gsap";
-import VaporizeTextCycle, { Tag } from "@/components/ui/vapour-text-effect";
 
 const Hero = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -89,27 +90,12 @@ const Hero = () => {
       </div>
       <Hero3D />
       <div className="container py-24 md:py-32">
-        <div className="hero-title h-[80px] md:h-[120px] lg:h-[140px] xl:h-[160px] mb-6">
-          <VaporizeTextCycle
-            texts={["Maheen Touqeer", "GenZ AI Developer"]}
-            font={{
-              fontFamily: "Orbitron, sans-serif",
-              fontSize: "clamp(48px, 8vw, 120px)",
-              fontWeight: 700
-            }}
-            color="rgb(139, 92, 246)"
-            spread={6}
-            density={6}
-            animation={{
-              vaporizeDuration: 2.5,
-              fadeInDuration: 1.2,
-              waitDuration: 2
-            }}
-            direction="left-to-right"
-            alignment="left"
-            tag={Tag.H1}
-          />
-        </div>
+        <GradientText
+          as="h1"
+          className="hero-title hero-name text-5xl md:text-7xl lg:text-8xl xl:text-9xl mb-6"
+        >
+          {about.name}
+        </GradientText>
         <h2 className="hero-subtitle text-xl md:text-2xl lg:text-3xl font-display font-semibold text-foreground/90 mb-6 leading-relaxed">
           AI Engineer & Generative AI Developer
         </h2>

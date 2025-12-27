@@ -104,16 +104,7 @@ const About = () => {
 
           {/* Skills Tags */}
           <motion.div className="mt-8 flex flex-wrap gap-3" variants={containerVariants}>
-            {topSkills.map((skill, index) => (
-              <motion.span
-                key={index}
-                className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium border border-primary/20 hover:bg-primary/20 transition-colors"
-                variants={skillVariants}
-                whileHover={{ scale: 1.05 }}
-              >
-                {skill}
-              </motion.span>
-            ))}
+            {topSkills.map((skill, index) => {})}
           </motion.div>
         </motion.div>
 
