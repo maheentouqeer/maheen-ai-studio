@@ -10,70 +10,74 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 220 70% 8%;
+    --background: 220 75% 5%;
     --foreground: 210 40% 98%;
 
-    --card: 220 65% 12%;
+    --card: 220 70% 8%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 220 65% 12%;
+    --popover: 220 70% 8%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 214 92% 55%; /* Electric blue */
+    --primary: 214 100% 55%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 220 45% 18%;
+    --secondary: 220 50% 12%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 220 40% 22%;
-    --muted-foreground: 215 20% 75%;
+    --muted: 220 45% 16%;
+    --muted-foreground: 215 25% 70%;
 
-    --accent: 214 92% 60%;
+    --accent: 214 100% 60%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 35% 25%;
-    --input: 220 35% 25%;
-    --ring: 214 92% 55%;
+    --border: 220 50% 18%;
+    --input: 220 50% 18%;
+    --ring: 214 100% 55%;
 
     --radius: 0.875rem;
 
-    --sidebar-background: 220 70% 8%;
+    --sidebar-background: 220 75% 5%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 214 92% 55%;
-    --sidebar-primary-foreground: 220 70% 8%;
-    --sidebar-accent: 220 45% 18%;
+    --sidebar-primary: 214 100% 55%;
+    --sidebar-primary-foreground: 220 75% 5%;
+    --sidebar-accent: 220 50% 12%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 220 35% 25%;
-    --sidebar-ring: 214 92% 55%;
+    --sidebar-border: 220 50% 18%;
+    --sidebar-ring: 214 100% 55%;
 
-  /* Premium tokens */
-  --primary-glow: 214 92% 70%;
-  --secondary-soft: 220 45% 28%; 
-  --accent-bright: 214 100% 65%;
-  --neon-cyan: 180 100% 50%;
-  --royal-blue: 214 92% 55%;
+    /* Premium tokens - Enhanced black & blue */
+    --primary-glow: 214 100% 65%;
+    --secondary-soft: 220 50% 20%; 
+    --accent-bright: 214 100% 70%;
+    --neon-cyan: 195 100% 50%;
+    --royal-blue: 214 100% 55%;
+    --deep-black: 220 80% 3%;
+    --shimmer-blue: 214 100% 80%;
     
-    /* Enhanced gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(214 92% 55%), hsl(214 92% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(220 45% 18%), hsl(220 45% 28%));
-    --gradient-hero: radial-gradient(circle at 25% 15%, hsl(214 92% 35% / 0.6), transparent 50%),
-                     radial-gradient(circle at 75% 35%, hsl(214 100% 45% / 0.4), transparent 55%),
-                     radial-gradient(circle at 50% 80%, hsl(220 70% 20% / 0.8), transparent 60%),
-                     linear-gradient(135deg, hsl(220 70% 8%), hsl(220 65% 15%));
-    --gradient-card: linear-gradient(135deg, hsl(220 65% 12% / 0.9), hsl(214 92% 20% / 0.15));
-    --gradient-text: linear-gradient(135deg, hsl(210 100% 90%), hsl(214 92% 55%), hsl(214 100% 70%));
+    /* Enhanced gradients - Premium black & blue */
+    --gradient-primary: linear-gradient(135deg, hsl(214 100% 50%), hsl(214 100% 65%), hsl(195 100% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(220 50% 10%), hsl(220 50% 18%));
+    --gradient-hero: radial-gradient(ellipse at 20% 10%, hsl(214 100% 40% / 0.5), transparent 45%),
+                     radial-gradient(ellipse at 80% 20%, hsl(195 100% 45% / 0.4), transparent 50%),
+                     radial-gradient(ellipse at 50% 90%, hsl(214 100% 25% / 0.6), transparent 55%),
+                     radial-gradient(ellipse at 30% 60%, hsl(220 80% 15% / 0.8), transparent 60%),
+                     linear-gradient(180deg, hsl(220 80% 3%), hsl(220 75% 8%));
+    --gradient-card: linear-gradient(145deg, hsl(220 70% 8% / 0.95), hsl(214 100% 15% / 0.2));
+    --gradient-text: linear-gradient(135deg, hsl(210 100% 95%), hsl(214 100% 60%), hsl(195 100% 65%), hsl(214 100% 75%));
+    --gradient-shine: linear-gradient(120deg, transparent, hsl(214 100% 70% / 0.3), transparent);
     
-  /* Enhanced shadows */
-  --shadow-elevate: 0 10px 30px -10px hsl(214 92% 55% / 0.4);
-  --shadow-glow: 0 0 40px hsl(214 92% 55% / 0.4);
-  --shadow-soft: 0 4px 20px -4px hsl(224 60% 4% / 0.5);
-  --shadow-deep: 0 20px 50px -12px hsl(214 92% 55% / 0.25);
-  --shadow-neon: 0 0 30px hsl(180 100% 50% / 0.3);
+    /* Enhanced shadows - Premium glow effects */
+    --shadow-elevate: 0 15px 40px -15px hsl(214 100% 55% / 0.5);
+    --shadow-glow: 0 0 50px hsl(214 100% 55% / 0.5), 0 0 100px hsl(214 100% 55% / 0.2);
+    --shadow-soft: 0 6px 25px -6px hsl(220 80% 3% / 0.7);
+    --shadow-deep: 0 25px 60px -15px hsl(214 100% 55% / 0.35);
+    --shadow-neon: 0 0 40px hsl(195 100% 50% / 0.4), 0 0 80px hsl(214 100% 55% / 0.2);
+    --shadow-premium: 0 0 0 1px hsl(214 100% 55% / 0.1), 0 20px 50px -12px hsl(214 100% 55% / 0.4);
   }
-
   .dark {
     --background: 220 70% 8%;
     --foreground: 210 40% 98%;
