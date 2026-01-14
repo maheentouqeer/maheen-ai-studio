@@ -98,15 +98,15 @@ const Projects = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
                 
                 {/* Image */}
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative min-h-48 max-h-80 overflow-hidden bg-muted/20 flex items-center justify-center">
                   {img ? (
                     <LazyImage 
                       src={img} 
                       alt={`${title} preview`} 
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                      className="w-full h-auto max-h-80 object-contain transition-transform duration-500 group-hover:scale-105" 
                     />
                   ) : (
-                    <div className="h-full w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                    <div className="h-48 w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                       <span className="text-6xl opacity-40">🚀</span>
                     </div>
                   )}
@@ -151,11 +151,11 @@ const Projects = () => {
           {active && (
             <div className="grid gap-6">
               {active.media_url && (
-                <div className="relative overflow-hidden rounded-xl">
+                <div className="relative overflow-hidden rounded-xl bg-muted/20 flex items-center justify-center max-h-[70vh]">
                   <LazyImage 
                     src={active.media_url} 
                     alt={`${active.title} preview`} 
-                    className="h-80 w-full object-cover" 
+                    className="w-full h-auto max-h-[70vh] object-contain" 
                   />
                 </div>
               )}
