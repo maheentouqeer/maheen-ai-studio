@@ -30,13 +30,6 @@ const ImageUpload = ({
   const [preview, setPreview] = useState<string>(value || "");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const generateFileName = (originalName: string) => {
-    const timestamp = Date.now();
-    const randomStr = Math.random().toString(36).substring(2, 8);
-    const extension = originalName.split('.').pop();
-    return `${path}/${timestamp}-${randomStr}.${extension}`;
-  };
-
   const handleFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -71,23 +64,35 @@ const ImageUpload = ({
       };
       reader.readAsDataURL(file);
 
-      // Upload to Supabase Storage
-      const fileName = generateFileName(file.name);
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(fileName, file, { upsert: false });
-
-      if (uploadError) {
-        throw uploadError;
+      // Get admin token from localStorage
+      const adminToken = localStorage.getItem('adminToken');
+      
+      if (!adminToken) {
+        throw new Error("Admin authentication required. Please log in again.");
       }
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(fileName);
+      // Upload via edge function (bypasses RLS using service role)
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("bucket", bucket);
+      formData.append("path", path);
 
-      const publicUrl = urlData.publicUrl;
-      onChange(publicUrl);
+      const { data, error } = await supabase.functions.invoke('admin-upload', {
+        body: formData,
+        headers: {
+          'x-admin-token': adminToken,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data.success) {
+        throw new Error(data.error || "Upload failed");
+      }
+
+      onChange(data.url);
       
       toast({
         title: "Upload successful",
