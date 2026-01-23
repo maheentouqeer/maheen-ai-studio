@@ -19,6 +19,30 @@ const ALLOWED_TABLES = [
   'assistant_knowledge'
 ];
 
+function verifyAdminToken(token: string): { valid: boolean; error?: string } {
+  if (!token) {
+    return { valid: false, error: "No token provided" };
+  }
+
+  try {
+    const tokenData = JSON.parse(atob(token));
+    
+    if (!tokenData.verified) {
+      return { valid: false, error: "Token not verified" };
+    }
+    
+    const expiresAt = new Date(tokenData.expiresAt);
+    if (expiresAt < new Date()) {
+      return { valid: false, error: "Token expired" };
+    }
+    
+    return { valid: true };
+  } catch (e) {
+    console.error("Token verification error:", e);
+    return { valid: false, error: "Invalid token format" };
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -28,40 +52,19 @@ serve(async (req) => {
     // Verify admin token
     const adminToken = req.headers.get("x-admin-token");
     
-    if (!adminToken) {
+    const tokenResult = verifyAdminToken(adminToken || "");
+    if (!tokenResult.valid) {
+      console.log("Token verification failed:", tokenResult.error);
       return new Response(
-        JSON.stringify({ error: "Unauthorized - No token provided" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Decode and verify the token
-    try {
-      const tokenData = JSON.parse(atob(adminToken));
-      const expiresAt = new Date(tokenData.expiresAt);
-      
-      if (expiresAt < new Date()) {
-        return new Response(
-          JSON.stringify({ error: "Token expired" }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      if (!tokenData.verified) {
-        return new Response(
-          JSON.stringify({ error: "Invalid token" }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-    } catch {
-      return new Response(
-        JSON.stringify({ error: "Invalid token format" }),
+        JSON.stringify({ error: tokenResult.error }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     // Parse request body
     const { action, table, data, id } = await req.json();
+    
+    console.log(`Admin CRUD request: ${action} on ${table}`);
 
     // Validate table name
     if (!ALLOWED_TABLES.includes(table)) {
@@ -93,8 +96,12 @@ serve(async (req) => {
           .select('*')
           .order('created_at', { ascending: false });
         
-        if (selectError) throw selectError;
+        if (selectError) {
+          console.error("Select error:", selectError);
+          throw selectError;
+        }
         result = { data: selectData };
+        console.log(`Selected ${selectData?.length || 0} rows from ${table}`);
         break;
 
       case 'insert':
@@ -111,8 +118,12 @@ serve(async (req) => {
           .select()
           .single();
         
-        if (insertError) throw insertError;
+        if (insertError) {
+          console.error("Insert error:", insertError);
+          throw insertError;
+        }
         result = { data: insertData };
+        console.log(`Inserted row into ${table}`);
         break;
 
       case 'update':
@@ -136,8 +147,12 @@ serve(async (req) => {
           .select()
           .single();
         
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error("Update error:", updateError);
+          throw updateError;
+        }
         result = { data: updateData };
+        console.log(`Updated row ${id} in ${table}`);
         break;
 
       case 'delete':
@@ -153,8 +168,12 @@ serve(async (req) => {
           .delete()
           .eq('id', id);
         
-        if (deleteError) throw deleteError;
+        if (deleteError) {
+          console.error("Delete error:", deleteError);
+          throw deleteError;
+        }
         result = { success: true };
+        console.log(`Deleted row ${id} from ${table}`);
         break;
     }
 

@@ -7,6 +7,30 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+function verifyAdminToken(token: string): { valid: boolean; error?: string } {
+  if (!token) {
+    return { valid: false, error: "No token provided" };
+  }
+
+  try {
+    const tokenData = JSON.parse(atob(token));
+    
+    if (!tokenData.verified) {
+      return { valid: false, error: "Token not verified" };
+    }
+    
+    const expiresAt = new Date(tokenData.expiresAt);
+    if (expiresAt < new Date()) {
+      return { valid: false, error: "Token expired" };
+    }
+    
+    return { valid: true };
+  } catch (e) {
+    console.error("Token verification error:", e);
+    return { valid: false, error: "Invalid token format" };
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -16,37 +40,12 @@ serve(async (req) => {
   try {
     // Verify admin token from header
     const adminToken = req.headers.get("x-admin-token");
-    const adminPasscode = Deno.env.get("ADMIN_PASSCODE");
     
-    if (!adminToken || !adminPasscode) {
+    const tokenResult = verifyAdminToken(adminToken || "");
+    if (!tokenResult.valid) {
+      console.log("Token verification failed:", tokenResult.error);
       return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Decode and verify the token (simple check - token contains expiry)
-    try {
-      const tokenData = JSON.parse(atob(adminToken));
-      const expiresAt = new Date(tokenData.expiresAt);
-      
-      if (expiresAt < new Date()) {
-        return new Response(
-          JSON.stringify({ error: "Token expired" }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      // Verify token signature (simple hash check)
-      if (!tokenData.verified) {
-        return new Response(
-          JSON.stringify({ error: "Invalid token" }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-    } catch {
-      return new Response(
-        JSON.stringify({ error: "Invalid token format" }),
+        JSON.stringify({ error: tokenResult.error }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -91,6 +90,8 @@ serve(async (req) => {
     const extension = file.name.split(".").pop();
     const fileName = `${path}/${timestamp}-${randomStr}.${extension}`;
 
+    console.log(`Uploading file to ${bucket}/${fileName}`);
+
     // Upload file using service role (bypasses RLS)
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from(bucket)
@@ -112,6 +113,8 @@ serve(async (req) => {
       .from(bucket)
       .getPublicUrl(fileName);
 
+    console.log(`Upload successful: ${urlData.publicUrl}`);
+
     return new Response(
       JSON.stringify({ 
         success: true, 
@@ -121,7 +124,7 @@ serve(async (req) => {
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Server error:", error);
     return new Response(
       JSON.stringify({ error: "Internal server error" }),
