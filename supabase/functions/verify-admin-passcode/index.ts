@@ -41,17 +41,17 @@ serve(async (req) => {
       });
     }
 
-    // Create a short-lived admin session token (24 hours)
-    const adminToken = await crypto.subtle.digest(
-      'SHA-256',
-      new TextEncoder().encode(`${adminPasscode}-${Date.now()}`)
-    );
+    // Create a session token with expiry (24 hours)
+    const sessionExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
     
-    const tokenString = Array.from(new Uint8Array(adminToken))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-
-    const sessionExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    // Create token payload as base64-encoded JSON
+    const tokenPayload = {
+      verified: true,
+      expiresAt: sessionExpiry.toISOString(),
+      createdAt: new Date().toISOString()
+    };
+    
+    const tokenString = btoa(JSON.stringify(tokenPayload));
 
     console.log('Admin passcode verified successfully');
 
