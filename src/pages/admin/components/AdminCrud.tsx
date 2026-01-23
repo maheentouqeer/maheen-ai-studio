@@ -38,11 +38,29 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
 
   const visibleColumns = useMemo(() => columns.filter(c => c.key !== 'id'), [columns]);
 
+  const getAdminToken = () => localStorage.getItem('adminToken');
+
+  const adminCrudRequest = async (action: string, data?: any, id?: string) => {
+    const adminToken = getAdminToken();
+    if (!adminToken) {
+      throw new Error('Admin authentication required. Please log in again.');
+    }
+
+    const { data: result, error } = await supabase.functions.invoke('admin-crud', {
+      body: { action, table, data, id },
+      headers: { 'x-admin-token': adminToken },
+    });
+
+    if (error) throw error;
+    if (result.error) throw new Error(result.error);
+    return result;
+  };
+
   const loadData = async () => {
     try {
       setLoading(true);
       
-      // Load select options from sources
+      // Load select options from sources (public read access)
       const opt: Record<string, { label: string; value: string }[]> = {};
       await Promise.all(columns.map(async (c) => {
         if (c.type === 'select' && c.optionsSource) {
@@ -60,13 +78,9 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
       }));
       setOptionsMap(opt);
 
-      const { data, error } = await (supabase.from as any)(table)
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(200);
-      
-      if (error) throw error;
-      setRows(data || []);
+      // Use edge function for admin data fetch
+      const result = await adminCrudRequest('select');
+      setRows(result.data || []);
     } catch (e: any) {
       console.error('Load data error:', e);
       toast({ 
@@ -150,36 +164,17 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
       });
 
       if (editing && editing.id) {
-        // Update existing record
-        const { data, error } = await (supabase.from as any)(table)
-          .update(cleanedForm)
-          .eq('id', editing.id)
-          .select('*')
-          .maybeSingle();
-        
-        if (error) {
-          console.error('Update error:', error);
-          throw new Error(error.message);
-        }
-        
-        console.log('Update successful:', data);
+        // Update existing record via edge function
+        await adminCrudRequest('update', cleanedForm, editing.id);
+        console.log('Update successful');
         toast({ 
           title: 'Updated successfully',
           description: `${table} entry has been updated.`
         });
       } else {
-        // Create new record
-        const { data, error } = await (supabase.from as any)(table)
-          .insert(cleanedForm)
-          .select('*')
-          .maybeSingle();
-        
-        if (error) {
-          console.error('Insert error:', error);
-          throw new Error(error.message);
-        }
-        
-        console.log('Insert successful:', data);
+        // Create new record via edge function
+        await adminCrudRequest('insert', cleanedForm);
+        console.log('Insert successful');
         toast({ 
           title: 'Created successfully',
           description: `New ${table} entry has been created.`
@@ -209,15 +204,8 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
     try {
       setDeleting(id);
       
-      const { error } = await (supabase.from as any)(table)
-        .delete()
-        .eq('id', id);
-      
-      if (error) {
-        console.error('Delete error:', error);
-        throw new Error(error.message);
-      }
-      
+      // Delete via edge function
+      await adminCrudRequest('delete', undefined, id);
       console.log('Delete successful for id:', id);
       
       // Reload data to ensure consistency
