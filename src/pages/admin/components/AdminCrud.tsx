@@ -9,6 +9,7 @@ import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import ImageUpload from "@/components/ui/ImageUpload";
+import { MediaListInput, LinksInput } from "@/components/ui/MediaListInput";
 import { Loader2, Plus, Pencil, Trash2, AlertCircle, Image as ImageIcon } from "lucide-react";
 
 type TableName = keyof Database['public']['Tables'];
@@ -16,7 +17,7 @@ type TableName = keyof Database['public']['Tables'];
 export type ColumnDef = {
   key: string;
   label: string;
-  type?: 'text' | 'textarea' | 'number' | 'date' | 'select' | 'image' | 'boolean';
+  type?: 'text' | 'textarea' | 'number' | 'date' | 'select' | 'image' | 'boolean' | 'media-list' | 'links';
   required?: boolean;
   options?: { label: string; value: string }[];
   optionsSource?: { table: TableName; value: string; label: string };
@@ -228,6 +229,10 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
 
   const renderCellValue = (row: any, col: ColumnDef) => {
     const value = row[col.key];
+
+    if (col.type === 'media-list' || col.type === 'links') {
+      return <span className="text-xs text-muted-foreground">{Array.isArray(value) ? value.length : 0} item(s)</span>;
+    }
     
     if (col.type === 'image' && value) {
       return (
@@ -407,6 +412,10 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
                         {form[c.key] ? 'Yes' : 'No'}
                       </span>
                     </div>
+                  ) : c.type === 'media-list' ? (
+                    <MediaListInput value={form[c.key] ?? []} onChange={(v) => change(c.key, v)} path={`${table}/${c.key}`} />
+                  ) : c.type === 'links' ? (
+                    <LinksInput value={form[c.key] ?? []} onChange={(v) => change(c.key, v)} />
                   ) : c.type === 'image' ? (
                     <ImageUpload 
                       value={form[c.key] ?? ''} 

@@ -50,8 +50,40 @@ serve(async (req) => {
 
     console.log('Contact saved, id:', contactData.id);
 
-    // Send email notification
-    if (resendApiKey) {
+    const esc = (v: string) => String(v).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
+    let gmailSent = false;
+    const lovableKey = Deno.env.get('LOVABLE_API_KEY');
+    const gmailKey = Deno.env.get('GOOGLE_MAIL_API_KEY');
+    if (lovableKey && gmailKey) {
+      try {
+        const b64 = (s: string) => btoa(Array.from(new TextEncoder().encode(s), (b) => String.fromCharCode(b)).join(''));
+        const hdr = (v: string) => (/^[\x00-\x7F]*$/.test(v) ? v : `=?UTF-8?B?${b64(v)}?=`);
+        const safeName = String(name).replace(/[\r\n]/g, ' ');
+        const safeEmail = String(email).replace(/[\r\n]/g, '');
+        const mime = [
+          'To: maheentouqeer76@gmail.com',
+          `Reply-To: ${safeEmail}`,
+          `Subject: ${hdr(`New portfolio contact: ${safeName}`)}`,
+          'MIME-Version: 1.0',
+          'Content-Type: text/html; charset="UTF-8"',
+          '',
+          `<h2>New Contact Form Submission</h2><p><strong>Name:</strong> ${esc(name)}</p><p><strong>Email:</strong> ${esc(email)}</p><p><strong>Message:</strong></p><p style="white-space:pre-wrap">${esc(message)}</p>`,
+        ].join('\r\n');
+        const raw = b64(mime).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const r = await fetch('https://connector-gateway.lovable.dev/google_mail/gmail/v1/users/me/messages/send', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${lovableKey}`, 'X-Connection-Api-Key': gmailKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ raw }),
+        });
+        if (!r.ok) console.error(`Gmail send failed [${r.status}]: ${await r.text()}`);
+        else { gmailSent = true; console.log('Gmail notification sent'); }
+      } catch (e) {
+        console.error('Gmail error:', e);
+      }
+    }
+
+    // Fallback email notification
+    if (!gmailSent && resendApiKey) {
       try {
         const resend = new Resend(resendApiKey);
         await resend.emails.send({

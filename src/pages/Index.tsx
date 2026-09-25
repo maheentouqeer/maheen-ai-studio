@@ -7,6 +7,7 @@ import Skills from "@/components/site/Skills";
 import Education from "@/components/site/Education";
 import Experience from "@/components/site/Experience";
 import Projects from "@/components/site/Projects";
+import Certifications from "@/components/site/Certifications";
 import HireLinks from "@/components/site/HireLinks";
 import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
@@ -21,6 +22,7 @@ const navItems = [
   { id: "education", label: "Education", href: "#education" },
   { id: "experience", label: "Experience", href: "#experience" },
   { id: "projects", label: "Projects", href: "#projects" },
+  { id: "certifications", label: "Awards", href: "#certifications" },
   { id: "contact", label: "Contact", href: "#contact" },
 ];
 
@@ -48,6 +50,7 @@ const Index = () => {
         <Education />
         <Experience />
         <Projects />
+        <Certifications />
         <HireLinks />
         <Contact />
       </main>

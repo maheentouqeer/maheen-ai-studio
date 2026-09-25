@@ -64,17 +64,17 @@ serve(async (req) => {
     }
 
     // Validate file type
-    if (!file.type.startsWith("image/")) {
+    if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
       return new Response(
-        JSON.stringify({ error: "Only image files are allowed" }),
+        JSON.stringify({ error: "Only image or video files are allowed" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     // Validate file size (10MB max)
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > 50 * 1024 * 1024) {
       return new Response(
-        JSON.stringify({ error: "File too large. Maximum size is 10MB" }),
+        JSON.stringify({ error: "File too large. Maximum size is 50MB" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

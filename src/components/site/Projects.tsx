@@ -6,6 +6,7 @@ import { useSupabaseData } from "@/hooks/useSupabaseData";
 import LazyImage from "@/components/ui/LazyImage";
 import LottieLoader from "@/components/ui/LottieLoader";
 import { ExternalLink } from "lucide-react";
+import { isVideoUrl } from "@/components/ui/MediaListInput";
 
 const Projects = () => {
   const [filter, setFilter] = useState<string>('All');
@@ -142,7 +143,7 @@ const Projects = () => {
 
       {/* Enhanced Modal */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl bg-gradient-card border-border/50 backdrop-blur-xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gradient-card border-border/50 backdrop-blur-xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-display font-bold title-gradient">
               {active?.title}
@@ -170,6 +171,29 @@ const Projects = () => {
                 {active.description}
               </p>
               
+              {Array.isArray(active.media_urls) && active.media_urls.length > 0 && (
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {active.media_urls.map((u: string) => isVideoUrl(u) ? (
+                    <video key={u} src={u} controls className="w-full rounded-lg max-h-[60vh] bg-muted/20" />
+                  ) : (
+                    <img key={u} src={u} alt={active.title} loading="lazy" className="w-full rounded-lg object-contain max-h-[60vh] bg-muted/20" />
+                  ))}
+                </div>
+              )}
+
+              {Array.isArray(active.links) && active.links.filter((l: any) => l?.url).length > 0 && (
+                <div className="flex flex-wrap gap-3">
+                  {active.links.filter((l: any) => l?.url).map((l: any, i: number) => (
+                    <Button key={i} asChild className="btn-premium w-fit">
+                      <a href={l.url} target="_blank" rel="noreferrer" className="flex items-center gap-2">
+                        {l.label || 'Open link'}
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    </Button>
+                  ))}
+                </div>
+              )}
+
               {active.link_url && (
                 <Button asChild className="btn-premium w-fit">
                   <a
