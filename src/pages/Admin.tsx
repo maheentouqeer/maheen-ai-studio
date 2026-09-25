@@ -9,7 +9,7 @@ import ContactsManager from "@/pages/admin/components/ContactsManager";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import BackgroundCircles from "@/components/ui/BackgroundCircles";
 import GradientText from "@/components/ui/GradientText";
-import { LogOut, Shield, Database, Users, Brain, Mail, Briefcase, GraduationCap, Folder, Link2, Layers } from "lucide-react";
+import { LogOut, Shield, Database, Users, Brain, Mail, Briefcase, GraduationCap, Folder, Link2, Layers, Award } from "lucide-react";
 
 const Admin = () => {
   const [loading, setLoading] = useState(true);
@@ -107,9 +107,15 @@ const Admin = () => {
     { key: 'title', label: 'Title', type: 'text', required: true },
     { key: 'description', label: 'Description', type: 'textarea' },
     { key: 'category_id', label: 'Category', type: 'select', optionsSource: { table: 'categories', value: 'id', label: 'name' } },
-    { key: 'media_url', label: 'Project Image', type: 'image' },
-    { key: 'link_url', label: 'Link URL', type: 'text' },
+    { key: 'media_url', label: 'Cover Image', type: 'image' },
+    { key: 'media_urls', label: 'Gallery (photos & videos)', type: 'media-list' },
+    { key: 'links', label: 'Project Links', type: 'links' },
     { key: 'published', label: 'Published', type: 'boolean' },
+  ];
+
+  const certificationsColumns: ColumnDef[] = [
+    { key: 'title', label: 'Title', type: 'text', required: true },
+    { key: 'image_url', label: 'Image', type: 'image' },
   ];
 
   const hireLinksColumns: ColumnDef[] = [
@@ -152,7 +158,7 @@ const Admin = () => {
 
       <main className="container mx-auto px-4 py-8 relative z-10">
         <Tabs defaultValue="about" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-1 glass-panel p-1 h-auto">
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-1 glass-panel p-1 h-auto">
             <TabsTrigger value="about" className="flex items-center gap-2 text-xs md:text-sm">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">About</span>
@@ -176,6 +182,10 @@ const Admin = () => {
             <TabsTrigger value="projects" className="flex items-center gap-2 text-xs md:text-sm">
               <Database className="h-4 w-4" />
               <span className="hidden sm:inline">Projects</span>
+            </TabsTrigger>
+            <TabsTrigger value="certifications" className="flex items-center gap-2 text-xs md:text-sm">
+              <Award className="h-4 w-4" />
+              <span className="hidden sm:inline">Certifications</span>
             </TabsTrigger>
             <TabsTrigger value="hirelinks" className="flex items-center gap-2 text-xs md:text-sm">
               <Link2 className="h-4 w-4" />
@@ -248,6 +258,16 @@ const Admin = () => {
             </div>
             <ErrorBoundary>
               <AdminCrud table="projects" columns={projectsColumns} />
+            </ErrorBoundary>
+          </TabsContent>
+
+          <TabsContent value="certifications" className="space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <Award className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Certifications & Awards</h2>
+            </div>
+            <ErrorBoundary>
+              <AdminCrud table="certifications" columns={certificationsColumns} />
             </ErrorBoundary>
           </TabsContent>
 

@@ -16,7 +16,8 @@ const ALLOWED_TABLES = [
   'categories',
   'projects',
   'hire_links',
-  'assistant_knowledge'
+  'assistant_knowledge',
+  'certifications'
 ];
 
 function verifyAdminToken(token: string): { valid: boolean; error?: string } {
