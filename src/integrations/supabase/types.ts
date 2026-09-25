@@ -101,6 +101,30 @@ export type Database = {
         }
         Relationships: []
       }
+      certifications: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contacts: {
         Row: {
           created_at: string
@@ -240,7 +264,9 @@ export type Database = {
           description: string | null
           id: string
           link_url: string | null
+          links: Json
           media_url: string | null
+          media_urls: Json
           published: boolean
           title: string
           updated_at: string
@@ -251,7 +277,9 @@ export type Database = {
           description?: string | null
           id?: string
           link_url?: string | null
+          links?: Json
           media_url?: string | null
+          media_urls?: Json
           published?: boolean
           title: string
           updated_at?: string
@@ -262,7 +290,9 @@ export type Database = {
           description?: string | null
           id?: string
           link_url?: string | null
+          links?: Json
           media_url?: string | null
+          media_urls?: Json
           published?: boolean
           title?: string
           updated_at?: string
