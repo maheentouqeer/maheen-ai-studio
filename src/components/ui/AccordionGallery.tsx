@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback, type CSSProperties } from 'react';
+import type React from 'react';
 import { gsap } from 'gsap';
 import './AccordionGallery.css';
 
