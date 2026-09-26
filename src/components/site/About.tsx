@@ -83,7 +83,7 @@ const About = () => {
         }}>
             <h3 className="font-display font-semibold text-primary mb-3">Featured Work</h3>
             <p className="text-sm text-muted-foreground/80">
-              🚀 30 AI Apps in 30 Days Challenge • 🎯 RAG & Agentic AI Specialist • 🎨 Creative AI Solutions
+              🤖 14-Agent AI Marketplace Architect • 🎯 RAG & Agentic AI Specialist • 🎨 Creative AI Solutions
             </p>
           </motion.div>
 
