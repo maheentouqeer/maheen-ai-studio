@@ -80,7 +80,6 @@ const Admin = () => {
   const skillsColumns: ColumnDef[] = [
     { key: 'skill_name', label: 'Skill Name', type: 'text', required: true },
     { key: 'category', label: 'Category', type: 'text' },
-    { key: 'proficiency', label: 'Proficiency (0-100)', type: 'number' },
   ];
 
   const educationColumns: ColumnDef[] = [
