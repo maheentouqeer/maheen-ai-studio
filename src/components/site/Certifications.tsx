@@ -1,11 +1,19 @@
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import LazyImage from "@/components/ui/LazyImage";
+import AccordionGallery from "@/components/ui/AccordionGallery";
 import { Award } from "lucide-react";
 
 const Certifications = () => {
   const { data } = useSupabaseData<any>("certifications");
   if (!data.length) return null;
   const items = [...data].sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
+  const galleryItems = items
+    .filter((c) => c.image_url)
+    .map((c) => ({
+      image: c.image_url,
+      label: c.title,
+      alt: c.title
+    }));
 
   return (
     <section id="certifications" className="container py-16 md:py-24" data-animate="fade-up">
@@ -14,23 +22,40 @@ const Certifications = () => {
           <h2 className="section-heading">Certifications & Awards</h2>
         </div>
       </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {items.map((c) => (
-          <article key={c.id} className="group overflow-hidden rounded-2xl border border-border/50 bg-gradient-card card-hover" data-animate="zoom-in">
-            <div className="bg-muted/20 flex items-center justify-center min-h-48">
-              {c.image_url ? (
-                <LazyImage src={c.image_url} alt={c.title} className="w-full h-auto max-h-80 object-contain transition-transform duration-500 group-hover:scale-105" />
-              ) : (
-                <Award className="h-16 w-16 text-primary/50" />
-              )}
-            </div>
-            <div className="p-5 flex items-center gap-3">
-              <Award className="h-5 w-5 text-primary shrink-0" />
-              <h3 className="font-display font-semibold text-lg">{c.title}</h3>
-            </div>
-          </article>
-        ))}
-      </div>
+      {galleryItems.length >= 2 ? (
+        <AccordionGallery
+          items={galleryItems}
+          defaultIndex={0}
+          accentColor="#237ef6"
+          overlayColor="#061023"
+          textColor="#f8fafc"
+          height={440}
+          gap={12}
+          radius={16}
+          expandRatio={0.45}
+          trigger="hover"
+          tilt={8}
+          parallax={0.5}
+        />
+      ) : (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {items.map((c) => (
+            <article key={c.id} className="group overflow-hidden rounded-2xl border border-border/50 bg-gradient-card card-hover" data-animate="zoom-in">
+              <div className="bg-muted/20 flex items-center justify-center min-h-48">
+                {c.image_url ? (
+                  <LazyImage src={c.image_url} alt={c.title} className="w-full h-auto max-h-80 object-contain transition-transform duration-500 group-hover:scale-105" />
+                ) : (
+                  <Award className="h-16 w-16 text-primary/50" />
+                )}
+              </div>
+              <div className="p-5 flex items-center gap-3">
+                <Award className="h-5 w-5 text-primary shrink-0" />
+                <h3 className="font-display font-semibold text-lg">{c.title}</h3>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 };
