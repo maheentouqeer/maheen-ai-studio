@@ -333,7 +333,6 @@ export type Database = {
           category: string | null
           created_at: string
           id: string
-          proficiency: number | null
           skill_name: string
           updated_at: string
         }
@@ -341,7 +340,6 @@ export type Database = {
           category?: string | null
           created_at?: string
           id?: string
-          proficiency?: number | null
           skill_name: string
           updated_at?: string
         }
@@ -349,7 +347,6 @@ export type Database = {
           category?: string | null
           created_at?: string
           id?: string
-          proficiency?: number | null
           skill_name?: string
           updated_at?: string
         }
