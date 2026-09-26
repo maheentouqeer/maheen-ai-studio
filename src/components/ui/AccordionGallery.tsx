@@ -216,25 +216,26 @@ const AccordionGallery = ({
     >
       {items.map((item, i) => {
         const isActive = i === active;
-        const Tag = (item.link ? 'a' : 'div') as 'div';
+        const panelProps = {
+          ref: (el: HTMLElement | null) => {
+            panelRefs.current[i] = el;
+          },
+          className: `ag-panel${isActive ? ' ag-panel--active' : ''}`,
+          style: { borderRadius: `${radius}px` },
+          ...(item.link ? { href: item.link } : {}),
+          onClick: (e: React.MouseEvent) => handleClick(i, e),
+          onMouseEnter: () => handleEnter(i),
+          onFocus: () => setActive(i),
+          onKeyDown: (e: React.KeyboardEvent) => handleKeyDown(i, e),
+          role: 'listitem' as const,
+          tabIndex: 0,
+          'aria-current': isActive ? ('true' as const) : undefined,
+          'aria-label': item.label
+        };
+        const Tag = (item.link ? 'a' : 'div') as any;
         return (
-          <Tag
-            key={i}
-            ref={el => {
-              panelRefs.current[i] = el;
-            }}
-            className={`ag-panel${isActive ? ' ag-panel--active' : ''}`}
-            style={{ borderRadius: `${radius}px` }}
-            href={item.link || undefined}
-            onClick={e => handleClick(i, e)}
-            onMouseEnter={() => handleEnter(i)}
-            onFocus={() => setActive(i)}
-            onKeyDown={e => handleKeyDown(i, e)}
-            role="listitem"
-            tabIndex={0}
-            aria-current={isActive ? 'true' : undefined}
-            aria-label={item.label}
-          >
+          <Tag key={i} {...panelProps}>
+
             <span className="ag-panel__frame">
               <span
                 className="ag-panel__media"
