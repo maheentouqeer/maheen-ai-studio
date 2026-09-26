@@ -22,7 +22,7 @@ const navItems = [
   { id: "education", label: "Education", href: "#education" },
   { id: "experience", label: "Experience", href: "#experience" },
   { id: "projects", label: "Projects", href: "#projects" },
-  { id: "certifications", label: "Awards", href: "#certifications" },
+  { id: "certifications", label: "Certificate & Award", href: "#certifications" },
   { id: "contact", label: "Contact", href: "#contact" },
 ];
 
