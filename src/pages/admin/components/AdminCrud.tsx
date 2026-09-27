@@ -98,6 +98,31 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
     loadData();
   }, [table]);
 
+  const [reordering, setReordering] = useState(false);
+  const moveRow = async (index: number, dir: -1 | 1) => {
+    const target = index + dir;
+    if (target < 0 || target >= rows.length) return;
+    const next = [...rows];
+    [next[index], next[target]] = [next[target], next[index]];
+    const prev = rows;
+    setRows(next);
+    setReordering(true);
+    try {
+      await Promise.all(
+        next.map((row, i) =>
+          row.sort_order === i + 1 ? null : adminCrudRequest('update', { sort_order: i + 1 }, row.id)
+        )
+      );
+      setRows(next.map((row, i) => ({ ...row, sort_order: i + 1 })));
+      toast({ title: 'Order updated' });
+    } catch (e: any) {
+      setRows(prev);
+      toast({ title: 'Reorder failed', description: e.message, variant: 'destructive' });
+    } finally {
+      setReordering(false);
+    }
+  };
+
   const startEdit = (row?: any) => {
     setEditing(row || {});
     if (row) {
@@ -296,7 +321,7 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
+              {rows.map((r, rowIndex) => (
                 <tr key={r.id} className="hover:bg-muted/30 transition-colors">
                   {visibleColumns.slice(0, 4).map(c => (
                     <td key={c.key} className="p-4 border-b border-border/50 align-middle">
@@ -304,6 +329,16 @@ const AdminCrud = ({ table, columns }: AdminCrudProps) => {
                     </td>
                   ))}
                   <td className="p-4 border-b border-border/50 text-right whitespace-nowrap">
+                    {table === 'projects' && (
+                      <>
+                        <Button variant="ghost" size="sm" title="Move up" disabled={reordering || rowIndex === 0} onClick={() => moveRow(rowIndex, -1)}>
+                          <ArrowUp className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" title="Move down" disabled={reordering || rowIndex === rows.length - 1} onClick={() => moveRow(rowIndex, 1)}>
+                          <ArrowDown className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
                     <Button 
                       variant="ghost" 
                       size="sm" 

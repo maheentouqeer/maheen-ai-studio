@@ -10,7 +10,11 @@ export function useSupabaseData<T = any>(table: string, columns: string = "*") {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const { data: result, error } = await (supabase.from as any)(table).select(columns);
+        let q = (supabase.from as any)(table).select(columns);
+        if (table === "projects") {
+          q = q.order("sort_order", { ascending: true }).order("created_at", { ascending: false });
+        }
+        const { data: result, error } = await q;
         if (error) throw error;
         setData(result || []);
       } catch (err: any) {
