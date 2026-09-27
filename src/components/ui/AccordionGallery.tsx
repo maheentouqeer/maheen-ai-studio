@@ -52,7 +52,7 @@ const AccordionGallery = ({
   stagger = 0.06,
   trigger = 'hover',
   showLabels = true,
-  grayscale = true,
+  grayscale = false,
   className = ''
 }: AccordionGalleryProps) => {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -101,7 +101,6 @@ const AccordionGallery = ({
         if (media) {
           const drift = Math.max(-1.5, Math.min(1.5, active - i));
           const shift = drift * parallax * mediaSize * 0.06;
-          const gray = grayscale ? (isActive ? 0 : 1) : 0;
           tl.to(
             media,
             {
@@ -109,8 +108,8 @@ const AccordionGallery = ({
               yPercent: -50,
               x: vertical ? 0 : isActive ? 0 : shift,
               y: vertical ? (isActive ? 0 : shift) : 0,
-              '--ag-gray': gray,
-              '--ag-dim': isActive ? 0 : 0.35,
+              '--ag-gray': 0,
+              '--ag-dim': 0,
               duration: dur,
               ease
             },

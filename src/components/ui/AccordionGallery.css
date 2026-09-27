@@ -52,8 +52,8 @@
 }
 
 .ag-panel__media {
-  --ag-gray: 1;
-  --ag-dim: 0.35;
+  --ag-gray: 0;
+  --ag-dim: 0;
   position: absolute;
   top: 50%;
   left: 50%;
