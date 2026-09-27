@@ -58,14 +58,16 @@ All colors MUST be HSL.
     --royal-blue: 217 93% 55%;
     
     /* Enhanced gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(217 93% 55%), hsl(215 92% 60%));
+    --gradient-primary: linear-gradient(135deg, hsl(217 93% 55%), hsl(262 83% 62%) 55%, hsl(190 95% 50%));
     --gradient-secondary: linear-gradient(135deg, hsl(218 44% 18%), hsl(218 44% 28%));
-    --gradient-hero: radial-gradient(circle at 25% 15%, hsl(217 93% 35% / 0.6), transparent 50%),
-                     radial-gradient(circle at 75% 35%, hsl(215 100% 45% / 0.4), transparent 55%),
-                     radial-gradient(circle at 50% 80%, hsl(219 76% 10% / 0.8), transparent 60%),
-                     linear-gradient(135deg, hsl(219 76% 5%), hsl(218 44% 12%));
-    --gradient-card: linear-gradient(135deg, hsl(220 60% 8% / 0.95), hsl(217 93% 20% / 0.15));
-    --gradient-text: linear-gradient(135deg, hsl(210 100% 95%), hsl(217 93% 55%), hsl(215 100% 70%));
+    --gradient-mesh: radial-gradient(ellipse 80% 55% at 18% 0%, hsl(217 93% 55% / 0.28), transparent 60%),
+                     radial-gradient(ellipse 65% 45% at 85% 8%, hsl(262 83% 60% / 0.20), transparent 55%),
+                     radial-gradient(ellipse 75% 50% at 50% 100%, hsl(190 95% 45% / 0.16), transparent 60%);
+    --gradient-hero: radial-gradient(ellipse 60% 55% at 20% 10%, hsl(217 93% 40% / 0.55), transparent 55%),
+                     radial-gradient(ellipse 55% 45% at 78% 25%, hsl(262 83% 52% / 0.38), transparent 55%),
+                     radial-gradient(ellipse 70% 50% at 45% 95%, hsl(190 95% 42% / 0.22), transparent 60%);
+    --gradient-card: linear-gradient(135deg, hsl(220 60% 8% / 0.95), hsl(262 83% 20% / 0.18));
+    --gradient-text: linear-gradient(135deg, hsl(210 100% 98%), hsl(217 93% 65%) 30%, hsl(190 100% 62%) 60%, hsl(262 90% 78%));
     
     /* Enhanced shadows */
     --shadow-elevate: 0 10px 30px -10px hsl(217 93% 55% / 0.4);
@@ -124,7 +126,10 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-    background: var(--gradient-primary);
+    background-color: hsl(var(--background));
+    background-image: var(--gradient-mesh);
+    background-attachment: fixed;
+    background-size: cover;
   }
   h1, h2, h3, h4 {
     font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
@@ -134,10 +139,10 @@ All colors MUST be HSL.
     font-family: 'Playfair Display', Georgia, Times, serif;
     font-weight: 700;
     background: linear-gradient(135deg, 
-      hsl(210 100% 90%), 
-      hsl(214 92% 55%), 
-      hsl(214 100% 70%),
-      hsl(180 100% 80%)
+      hsl(210 100% 96%), 
+      hsl(214 92% 60%), 
+      hsl(190 100% 65%),
+      hsl(262 90% 78%)
     );
     background-size: 200% 200%;
     -webkit-background-clip: text;
@@ -146,7 +151,8 @@ All colors MUST be HSL.
     animation: gradient-shift 8s ease-in-out infinite;
     text-shadow: 0 0 40px hsl(214 92% 55% / 0.4);
     letter-spacing: -0.025em;
-    line-height: 0.85;
+    line-height: 1.15;
+    padding-bottom: 0.08em;
   }
 }
 
