@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { MediaListInput, LinksInput } from "@/components/ui/MediaListInput";
-import { Loader2, Plus, Pencil, Trash2, AlertCircle, Image as ImageIcon } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, AlertCircle, Image as ImageIcon, ArrowUp, ArrowDown } from "lucide-react";
 
 type TableName = keyof Database['public']['Tables'];
 
