@@ -268,6 +268,7 @@ export type Database = {
           media_url: string | null
           media_urls: Json
           published: boolean
+          sort_order: number
           title: string
           updated_at: string
         }
@@ -281,6 +282,7 @@ export type Database = {
           media_url?: string | null
           media_urls?: Json
           published?: boolean
+          sort_order?: number
           title: string
           updated_at?: string
         }
@@ -294,6 +296,7 @@ export type Database = {
           media_url?: string | null
           media_urls?: Json
           published?: boolean
+          sort_order?: number
           title?: string
           updated_at?: string
         }

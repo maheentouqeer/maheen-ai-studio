@@ -92,9 +92,9 @@ serve(async (req) => {
 
     switch (action) {
       case 'select':
-        const { data: selectData, error: selectError } = await supabase
-          .from(table)
-          .select('*')
+        let q = supabase.from(table).select('*');
+        if (table === 'projects') q = q.order('sort_order', { ascending: true });
+        const { data: selectData, error: selectError } = await q
           .order('created_at', { ascending: false });
         
         if (selectError) {
