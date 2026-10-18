@@ -16,7 +16,7 @@ jobs:
     env:
       SUPABASE_URL: https://urpekpxpvoaqagdjyerm.supabase.co
       # Public anonymous key already used by the website, NOT a service-role key.
-      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6InVycGVrcHhwdm9hcWFnZGp5ZXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwMDQxMTUsImV4cCI6MjA3MDU4MDExNX0.3STx94LCn8utO9DzqOsRlZ1Iesrdd4DSfbykeBSmfco
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVycGVrcHhwdm9hcWFnZGp5ZXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwMDQxMTUsImV4cCI6MjA3MDU4MDExNX0.3STx94LCn8utO9DzqOsRlZ1Iesrdd4DSfbykeBSmfco
     steps:
       - name: Read one public project without changing data
         shell: bash
