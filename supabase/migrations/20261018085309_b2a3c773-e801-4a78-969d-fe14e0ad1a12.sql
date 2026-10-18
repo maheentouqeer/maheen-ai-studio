@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS "Public can view assistant knowledge" ON public.assistant_knowledge;
+ALTER FUNCTION public.match_assistant_knowledge(extensions.vector, double precision, integer) SECURITY INVOKER;
