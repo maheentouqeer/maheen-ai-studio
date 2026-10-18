@@ -1,10 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Star, Trophy, Clock, CheckCircle } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
-import TestimonialCard from "@/components/ui/TestimonialCard";
-import AnimatedCounter from "@/components/ui/AnimatedCounter";
 
 const HireLinks = () => {
   const { data: hireLinks, loading } = useSupabaseData<any>("hire_links");
