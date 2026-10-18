@@ -1,0 +1,32 @@
+name: Supabase activity check
+
+on:
+  schedule:
+    # UTC: every five days within each month; never more than five days apart.
+    - cron: '17 8 */5 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: https://urpekpxpvoaqagdjyerm.supabase.co
+      # Public anonymous key already used by the website, NOT a service-role key.
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6InVycGVrcHhwdm9hcWFnZGp5ZXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwMDQxMTUsImV4cCI6MjA3MDU4MDExNX0.3STx94LCn8utO9DzqOsRlZ1Iesrdd4DSfbykeBSmfco
+    steps:
+      - name: Read one public project without changing data
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --retry 3 --retry-delay 10 --retry-max-time 180 \
+            --connect-timeout 15 --max-time 30 \
+            --header "apikey: ${SUPABASE_ANON_KEY}" \
+            --header "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            --output /dev/null \
+            "${SUPABASE_URL}/rest/v1/projects?select=id&limit=1"
+          echo "Supabase public read succeeded; no data was changed."
